@@ -1,8 +1,30 @@
 const { pool } = require("../Database/Connection");
 
 //Function to get user profile using user_id
+//Test function right now
 async function getUser(req, res) {
-  return res.status(200).json({ Message: "Hello from user" });
+  const { identfier } = req.body;
+
+  if (!identfier) {
+    return res.status(422).json({
+      message: "All fields are required",
+    });
+  }
+  try {
+    const [user] = await pool.query(
+      `select * from users
+        where email = ?`,
+      [identfier],
+    );
+
+    return res.status(200).json({ user: user });
+  } catch (error) {}
+
+  console.error("Registration error:", error.message);
+
+  return res.status(500).json({
+    message: "Internal server error",
+  });
 }
 
 //Function to register new user
@@ -40,5 +62,8 @@ async function registerUser(req, res) {
     });
   }
 }
+
+//Function to login user
+async function loginUser(req, res) {}
 
 module.exports = { getUser, registerUser };
