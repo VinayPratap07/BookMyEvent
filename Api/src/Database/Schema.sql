@@ -18,7 +18,7 @@ CREATE TABLE venue(
     venue_id INT AUTO_INCREMENT PRIMARY KEY,
     venue_name VARCHAR(100) NOT NULL,
     venue_address VARCHAR(150) NOT NULL,
-    venue_map_link VARCHAR(100) NOT NULL,
+    venue_map_link VARCHAR(2048) NOT NULL,
     owned_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (owned_by) REFERENCES users(user_id)
@@ -49,7 +49,7 @@ CREATE TABLE events(
     event_name VARCHAR(100) NOT NULL,
     event_description VARCHAR(500) NOT NULL,
     event_type VARCHAR(50) NOT NULL,
-    event_image VARCHAR(100) NOT NULL,
+    event_image VARCHAR(2048) NOT NULL,
     event_duration VARCHAR(20) NOT NULL,
     released_at VARCHAR(25) NOT NULL,
     min_age int NOT NULL,
@@ -58,63 +58,72 @@ CREATE TABLE events(
 );
 
 --Show table
-CREATE TABLE shows(
+CREATE TABLE shows (
     show_id INT AUTO_INCREMENT PRIMARY KEY,
-    event_id_ref INT,
-    screen_id_ref INT,
-    start_time VARCHAR(20) NOT NULL,
-    end_time VARCHAR(20) NOT NULL,
-    show_date VARCHAR(20) NOT NULL,
+    event_id_ref INT NOT NULL,
+    screen_id_ref INT NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    show_date DATE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (event_id_ref) REFERENCES events(event_id)
+    FOREIGN KEY (event_id_ref) REFERENCES events(event_id),
     FOREIGN KEY (screen_id_ref) REFERENCES screens(screen_id)
 );
 
 --Bookings table
-CREATE TABLE bookings(
+CREATE TABLE bookings (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
-    booked_by INT,
-    show_id INT,
-    total_amount INT,
-    status ENUM('BOOKED', 'PROCESSING','FAILED') NOT NULL DEFAULT 'PROCESSING',
+    booked_by INT NOT NULL,
+    show_id INT NOT NULL,
+    total_amount DECIMAL(10,2) NOT NULL,
+    status ENUM('BOOKED', 'PROCESSING', 'FAILED')
+        NOT NULL DEFAULT 'PROCESSING',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (booked_by) REFERENCES users(user_id),
+    FOREIGN KEY (show_id) REFERENCES shows(show_id)
 );
 
 --Show seat
-CREATE TABLE show_seats(
+CREATE TABLE show_seats (
     show_seat_id INT AUTO_INCREMENT PRIMARY KEY,
-    show_id_ref INT,
-    seat_id_ref INT,
-    status ENUM('BOOKED', 'LOCKED','OPEN') NOT NULL DEFAULT 'OPEN',
-    price INT NOT NULL,
+    show_id_ref INT NOT NULL,
+    seat_id_ref INT NOT NULL,
+    status ENUM('BOOKED', 'LOCKED', 'OPEN')
+        NOT NULL DEFAULT 'OPEN',
+    price DECIMAL(10,2) NOT NULL,
 
-    
-    FOREIGN KEY (show_id_ref) REFERENCES shows(show_id)
+    UNIQUE (show_id_ref, seat_id_ref),
+
+    FOREIGN KEY (show_id_ref) REFERENCES shows(show_id),
     FOREIGN KEY (seat_id_ref) REFERENCES seats(seat_id)
 );
 
 --Booking seats table
-CREATE TABLE booking_seats(
+CREATE TABLE booking_seats (
     booking_seat_id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_id_ref INT,
-    show_seat_id_ref INT,
-    price INT Not NULL,
+    booking_id_ref INT NOT NULL,
+    show_seat_id_ref INT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
 
-    FOREIGN KEY (booking_id_ref) REFERENCES bookings(booking_id)
+    UNIQUE (show_seat_id_ref),
+
+    FOREIGN KEY (booking_id_ref) REFERENCES bookings(booking_id),
     FOREIGN KEY (show_seat_id_ref) REFERENCES show_seats(show_seat_id)
 );
-
 --Payments table
-CREATE TABLE payment_info(
+CREATE TABLE payment_info (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_id_ref INT,
-    transaction_id INT NOT NULL,
-    amount INT NOT NULL,
+    booking_id_ref INT NOT NULL,
+    transaction_id VARCHAR(255) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
-    payment_status ENUM('PROCESSING', 'COMPLETED','FAILED') NOT NULL DEFAULT 'PROCESSING',
-    completed_at INT NOT NULL,
+    payment_status ENUM('PROCESSING', 'COMPLETED', 'FAILED')
+        NOT NULL DEFAULT 'PROCESSING',
+    completed_at DATETIME NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (booking_id_ref) REFERENCES bookings(booking_id)
+    FOREIGN KEY (booking_id_ref) REFERENCES bookings(booking_id),
+    UNIQUE (transaction_id)
 );

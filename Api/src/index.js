@@ -1,11 +1,16 @@
+require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const express = require("express");
 
 //Routes
 const userRoutes = require("./Routes/User.Routes");
+const { connectDB } = require("./Database/Connection");
 
 const app = express();
 const PORT = 3000;
+
+//Database connection
+connectDB();
 
 //Middlewares
 app.use(express.json());
