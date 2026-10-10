@@ -3,7 +3,7 @@ CREATE DATABASE IF NOT EXISTS book_my_event;
 USE book_my_event;
 
 -- Users table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE users (
 ); 
 
 -- Venue table
-CREATE TABLE venue(
+CREATE TABLE IF NOT EXISTS venue(
     venue_id INT AUTO_INCREMENT PRIMARY KEY,
     venue_name VARCHAR(100) NOT NULL,
     venue_address VARCHAR(150) NOT NULL,
@@ -24,8 +24,8 @@ CREATE TABLE venue(
     FOREIGN KEY (owned_by) REFERENCES users(user_id)
 );
 
---Screens table
-CREATE TABLE screens(
+-- Screens table
+CREATE TABLE IF NOT EXISTS screens(
     screen_id INT AUTO_INCREMENT PRIMARY KEY,
     screen_name VARCHAR(100) NOT NULL,
     venue_id_ref INT,
@@ -33,8 +33,8 @@ CREATE TABLE screens(
     FOREIGN KEY (venue_id_ref) REFERENCES venue(venue_id)
 );
 
---Seats table 
-CREATE TABLE seats(
+-- Seats table 
+CREATE TABLE IF NOT EXISTS seats(
     seat_id INT AUTO_INCREMENT PRIMARY KEY,
     screen_id_ref INT,
     row_label VARCHAR(5) NOT NULL,
@@ -43,8 +43,8 @@ CREATE TABLE seats(
     FOREIGN KEY (screen_id_ref) REFERENCES screens(screen_id)
 );
 
---Events table 
-CREATE TABLE events(
+-- Events table 
+CREATE TABLE IF NOT EXISTS events(
     event_id INT AUTO_INCREMENT PRIMARY KEY,
     event_name VARCHAR(100) NOT NULL,
     event_description VARCHAR(500) NOT NULL,
@@ -57,8 +57,8 @@ CREATE TABLE events(
     language VARCHAR(50) NOT NULL
 );
 
---Show table
-CREATE TABLE shows (
+-- Show table
+CREATE TABLE IF NOT EXISTS shows (
     show_id INT AUTO_INCREMENT PRIMARY KEY,
     event_id_ref INT NOT NULL,
     screen_id_ref INT NOT NULL,
@@ -71,8 +71,8 @@ CREATE TABLE shows (
     FOREIGN KEY (screen_id_ref) REFERENCES screens(screen_id)
 );
 
---Bookings table
-CREATE TABLE bookings (
+-- Bookings table
+CREATE TABLE IF NOT EXISTS bookings (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     booked_by INT NOT NULL,
     show_id INT NOT NULL,
@@ -85,8 +85,8 @@ CREATE TABLE bookings (
     FOREIGN KEY (show_id) REFERENCES shows(show_id)
 );
 
---Show seat
-CREATE TABLE show_seats (
+-- Show seat
+CREATE TABLE IF NOT EXISTS show_seats (
     show_seat_id INT AUTO_INCREMENT PRIMARY KEY,
     show_id_ref INT NOT NULL,
     seat_id_ref INT NOT NULL,
@@ -100,8 +100,8 @@ CREATE TABLE show_seats (
     FOREIGN KEY (seat_id_ref) REFERENCES seats(seat_id)
 );
 
---Booking seats table
-CREATE TABLE booking_seats (
+-- Booking seats table
+CREATE TABLE IF NOT EXISTS booking_seats (
     booking_seat_id INT AUTO_INCREMENT PRIMARY KEY,
     booking_id_ref INT NOT NULL,
     show_seat_id_ref INT NOT NULL,
@@ -112,8 +112,8 @@ CREATE TABLE booking_seats (
     FOREIGN KEY (booking_id_ref) REFERENCES bookings(booking_id),
     FOREIGN KEY (show_seat_id_ref) REFERENCES show_seats(show_seat_id)
 );
---Payments table
-CREATE TABLE payment_info (
+-- Payments table
+CREATE TABLE IF NOT EXISTS payment_info (
     payment_id INT AUTO_INCREMENT PRIMARY KEY,
     booking_id_ref INT NOT NULL,
     transaction_id VARCHAR(255) NOT NULL,
