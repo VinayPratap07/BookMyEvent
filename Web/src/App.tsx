@@ -1,12 +1,11 @@
-import HeroSection from "./Components/Hero.Sectio";
+import { Outlet } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 
 function App() {
   return (
     <div>
       <Navbar />
-      <HeroSection />
-      <div className="min-h-screen"></div>
+      <Outlet />
     </div>
   );
 }
