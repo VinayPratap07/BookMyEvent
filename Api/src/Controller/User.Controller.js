@@ -1,4 +1,5 @@
 const { pool } = require("../Database/Connection");
+const { hashPassword } = require("../Utils/HashPassword");
 
 //Function to get user profile using user_id
 //Test function right now
@@ -38,10 +39,12 @@ async function registerUser(req, res) {
   }
 
   try {
+    const hashedPassword = await hashPassword("password");
+
     const user = await pool.query(
       `INSERT INTO users (full_name, email, phone_no, password)
         VALUES (?, ?, ?, ?)`,
-      [fullName, email, phoneNo, password],
+      [fullName, email, phoneNo, hashedPassword],
     );
 
     return res.status(201).json({
