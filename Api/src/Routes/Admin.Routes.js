@@ -1,8 +1,9 @@
 const { Router } = require("express");
-const { addVenue } = require("../Controller/Admin.Controller");
+const { createVenue, createScreen } = require("../Controller/Admin.Controller");
 
 const routes = Router();
 
-routes.post("/listVenue", addVenue);
+routes.post("/listVenue", createVenue);
+routes.post("/addScreen", createScreen);
 
 module.exports = routes;
