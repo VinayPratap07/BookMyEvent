@@ -67,4 +67,27 @@ async function createScreen(req, res) {
   }
 }
 
-module.exports = { createVenue, createScreen };
+async function addSeatesInScreen(req, res) {
+  const { screen_id, row_label, seat_number, seat_type } = req.body;
+
+  if (!screen_id || !row_label || !seat_number || !seat_type) {
+    return res.status(422).json({ message: "All fields are required" });
+  }
+
+  try {
+    for (let i = 1; i <= seat_number; i++) {
+      await pool.query(
+        `INSERT INTO seats(screen_id_ref, row_label, seat_number, seat_type)
+                VALUES(?,?,?,?)`,
+        [screen_id, row_label, i, seat_type],
+      );
+    }
+
+    return res.status(201).json({ message: "Added" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Failed to add seats" });
+  }
+}
+
+module.exports = { createVenue, createScreen, addSeatesInScreen };
