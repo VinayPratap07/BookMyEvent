@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS venue(
     venue_name VARCHAR(100) NOT NULL,
     venue_address VARCHAR(150) NOT NULL,
     venue_map_link VARCHAR(2048) NOT NULL,
-    owned_by INT,
+    owned_by INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (owned_by) REFERENCES users(user_id)
 );

@@ -2,7 +2,7 @@ const { verifyToken } = require("../Service/JWT_Authentication");
 
 function authenticationMiddleware(cookieValue) {
   return (req, res, next) => {
-    const cookie = res.cookies[cookieValue];
+    const cookie = req.cookies[cookieValue];
     if (!cookie) {
       return next();
     }

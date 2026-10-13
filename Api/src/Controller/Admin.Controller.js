@@ -1,0 +1,39 @@
+const { pool } = require("../Database/Connection");
+
+async function addVenue(req, res) {
+  const { venue_name, venue_address, maps_link } = req.body;
+  const { id } = req.user;
+
+  console.log(id);
+
+  if (!venue_name || !venue_address || !maps_link) {
+    return res.status(422).json({ message: "All fields are required" });
+  }
+
+  try {
+    const venue = await pool.query(
+      `INSERT INTO venue (venue_name, venue_address, venue_map_link, owned_by)
+            VALUES(?,?,?,?)`,
+      [venue_name, venue_address, maps_link, id],
+    );
+
+    return res.status(201).json({
+      message: "Venue created successfully",
+      userId: venue.insertId,
+    });
+  } catch (error) {
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({
+        message: "Field already exists",
+      });
+    }
+
+    console.error("Registration error:", error.message);
+
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+}
+
+module.exports = { addVenue };
