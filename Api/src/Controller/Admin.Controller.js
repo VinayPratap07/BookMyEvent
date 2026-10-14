@@ -90,4 +90,55 @@ async function addSeatesInScreen(req, res) {
   }
 }
 
-module.exports = { createVenue, createScreen, addSeatesInScreen };
+async function addEvent(req, res) {
+  const {
+    event_name,
+    event_description,
+    event_type,
+    event_imgLink,
+    event_duration,
+    released_at,
+    min_age,
+    genre,
+    language,
+  } = req.body;
+
+  if (
+    !event_name ||
+    !event_description ||
+    !event_type ||
+    !event_imgLink ||
+    !event_duration ||
+    !released_at ||
+    !min_age ||
+    !genre ||
+    !language
+  ) {
+    return res.status(422).json({ message: "All fields are required" });
+  }
+
+  try {
+    await pool.query(
+      `INSERT INTO  events(event_name, event_description, event_type, event_image, event_duration, released_at, min_age, genere, language)
+        values(?,?,?,?,?,?,?,?,?);`,
+      [
+        event_name,
+        event_description,
+        event_type,
+        event_imgLink,
+        event_duration,
+        released_at,
+        min_age,
+        genre,
+        language,
+      ],
+    );
+
+    return res.status(201).json({ message: "Event created " });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Failed to add event" });
+  }
+}
+
+module.exports = { createVenue, createScreen, addSeatesInScreen, addEvent };
