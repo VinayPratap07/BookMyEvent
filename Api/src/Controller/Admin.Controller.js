@@ -141,4 +141,31 @@ async function addEvent(req, res) {
   }
 }
 
-module.exports = { createVenue, createScreen, addSeatesInScreen, addEvent };
+async function createShow(req, res) {
+  const { event_id, screen_id, start_time, end_time, show_date } = req.body;
+
+  if (!event_id || !screen_id || !start_time || !end_time || !show_date) {
+    return res.status(422).json({ message: "All fields are required" });
+  }
+
+  try {
+    await pool.query(
+      `INSERT INTO shows(event_id_ref, screen_id_ref, start_time, end_time, show_date)
+                VALUES(?,?,?,?,?)`,
+      [event_id, screen_id, start_time, end_time, show_date],
+    );
+
+    return res.status(201).json({ message: "Added" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Failed to add show" });
+  }
+}
+
+module.exports = {
+  createVenue,
+  createScreen,
+  addSeatesInScreen,
+  addEvent,
+  createShow,
+};
