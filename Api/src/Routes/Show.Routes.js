@@ -1,8 +1,12 @@
 const { Router } = require("express");
-const { getShows } = require("../Controller/Show.Controller");
+const {
+  getAvailableEvents,
+  getAvailableShows,
+} = require("../Controller/Show.Controller");
 
 const routes = Router();
 
-routes.get("/allShows", getShows);
+routes.get("/getEvents", getAvailableEvents);
+routes.get("/getShows/:id", getAvailableShows);
 
 module.exports = routes;
