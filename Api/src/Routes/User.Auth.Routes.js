@@ -3,7 +3,7 @@ const {
   getUser,
   registerUser,
   loginUser,
-} = require("../Controller/User.Controller");
+} = require("../Controller/User.Auth.Controller");
 
 const router = Router();
 
