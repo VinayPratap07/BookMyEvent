@@ -3,6 +3,7 @@ import HeroSection from "../Components/Hero.Section";
 import Card from "../Components/card";
 import { getAllEvents } from "../API/ShowApi";
 import LoadingScreen from "../Components/Loading";
+import ErrorState from "../Components/Error";
 
 //Sample data
 const SAMPLE_EVENTS = [
@@ -48,7 +49,7 @@ function HomePage() {
     return <LoadingScreen />;
   }
   if (error) {
-    return <div>Error</div>;
+    return <ErrorState />;
   }
 
   return (
