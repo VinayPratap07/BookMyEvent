@@ -8,6 +8,10 @@ import {
   FiCoffee,
 } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
+import { getAllShows } from "../API/ShowApi";
+import LoadingScreen from "../Components/Loading";
+import ErrorState from "../Components/Error";
 
 // --- Types ---
 export interface Showtime {
@@ -182,6 +186,23 @@ export const EventShowPage: React.FC = () => {
         return "border-slate-300 text-slate-700";
     }
   };
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["AvailableShows"],
+    queryFn: getAllShows,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  console.log(data);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return <ErrorState />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50/50 pb-16">
