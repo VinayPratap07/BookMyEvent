@@ -30,7 +30,7 @@ function Card({ event }: EventCardProps) {
   } = event;
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-sky-100 bg-white shadow-xs transition duration-200 hover:-translate-y-1 hover:border-sky-200 hover:shadow-md">
+    <article className="group flex flex-col overflow-hidden rounded-xl border border-sky-100 bg-white shadow-xs transition duration-200 hover:-translate-y-1 hover:border-sky-200 hover:shadow-md cursor-pointer">
       {/* Thumbnail Container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
         <img

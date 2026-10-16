@@ -1,5 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import HeroSection from "../Components/Hero.Section";
 import Card from "../Components/card";
+import { getAllEvents } from "../API/ShowApi";
+import LoadingScreen from "../Components/Loading";
 
 //Sample data
 const SAMPLE_EVENTS = [
@@ -32,6 +35,22 @@ const SAMPLE_EVENTS = [
 ];
 
 function HomePage() {
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["events"],
+    queryFn: getAllEvents,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  console.log(data);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+  if (error) {
+    return <div>Error</div>;
+  }
+
   return (
     <div>
       <HeroSection />
