@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { FiSearch, FiChevronDown, FiMapPin, FiX } from "react-icons/fi";
 import { HiTicket } from "react-icons/hi2";
+import { Link } from "react-router-dom";
 
 interface NavbarProps {
   onSearch?: (query: string) => void;
@@ -70,14 +71,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-50 w-full border-b border-sky-100 bg-white shadow-xs">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Brand / Logo */}
-        <div className="flex shrink-0 items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-100 text-sky-500">
-            <HiTicket className="h-5 w-5" />
+        <Link to="/">
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-100 text-sky-500">
+              <HiTicket className="h-5 w-5" />
+            </div>
+
+            <span className="text-xl font-bold tracking-tight text-slate-800">
+              BookMy<span className="text-sky-500">Event</span>
+            </span>
           </div>
-          <span className="text-xl font-bold tracking-tight text-slate-800">
-            BookMy<span className="text-sky-500">Event</span>
-          </span>
-        </div>
+        </Link>
 
         {/* Search Bar */}
         <form
