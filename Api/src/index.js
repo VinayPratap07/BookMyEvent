@@ -2,7 +2,7 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const { connectDB } = require("./Database/Connection");
-const { authenticationMiddleware } = require("./Middleware/auth_middleware");
+const { authenticationMiddleware } = require("./Middleware/auth.middleware");
 const cors = require("cors");
 
 //Routes
