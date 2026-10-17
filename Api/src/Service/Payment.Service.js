@@ -2,10 +2,9 @@ const Stripe = require("stripe");
 
 const stripe = new Stripe(process.env.STRIPE_SECERET_KEY);
 
-async function createPayment(amount, ticketName) {
+async function stripePaymentGateway(amount, ticketName) {
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    payment_method_types: ["card"],
     line_items: [
       {
         price_data: {
@@ -26,4 +25,4 @@ async function createPayment(amount, ticketName) {
   return session;
 }
 
-module.exports = { createPayment };
+module.exports = { stripePaymentGateway };

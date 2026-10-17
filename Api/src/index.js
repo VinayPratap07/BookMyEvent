@@ -9,6 +9,7 @@ const cors = require("cors");
 const userRoutes = require("./Routes/User.Auth.Routes");
 const adminRoutes = require("./Routes/Admin.Routes");
 const showRoutes = require("./Routes/Show.Routes");
+const paymentRoutes = require("./Routes/Payment.Routes");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -33,6 +34,7 @@ app.use(cors(corsOptions));
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/show", showRoutes);
+app.use("/api/payment", paymentRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started at PORT: ${PORT}`);
