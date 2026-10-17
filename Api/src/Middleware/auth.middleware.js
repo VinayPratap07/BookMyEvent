@@ -1,4 +1,4 @@
-const { verifyToken } = require("../Service/JWT_Authentication");
+const { verifyToken } = require("../Service/JWT_Authentication.Service");
 
 function authenticationMiddleware(cookieValue) {
   return (req, res, next) => {

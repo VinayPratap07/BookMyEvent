@@ -3,40 +3,40 @@ CREATE DATABASE IF NOT EXISTS book_my_event;
 USE book_my_event;
 
 -- Users table
-CREATE TABLE IF NOT EXISTS users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE users (
+    user_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone_no VARCHAR(12) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('USER', 'ADMIN') NOT NULL DEFAULT 'USER',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-); 
+);
 
 -- Venue table
 CREATE TABLE IF NOT EXISTS venue(
-    venue_id INT AUTO_INCREMENT PRIMARY KEY,
+    venue_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     venue_name VARCHAR(100) NOT NULL,
     venue_address VARCHAR(150) NOT NULL,
     venue_map_link VARCHAR(2048) NOT NULL,
-    owned_by INT NOT NULL,
+    owned_by CHAR(36) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (owned_by) REFERENCES users(user_id)
 );
 
 -- Screens table
 CREATE TABLE IF NOT EXISTS screens(
-    screen_id INT AUTO_INCREMENT PRIMARY KEY,
+    screen_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     screen_name VARCHAR(100) NOT NULL,
-    venue_id_ref INT,
+    venue_id_ref CHAR(36) NOT NULL,
     total_seats INT,
     FOREIGN KEY (venue_id_ref) REFERENCES venue(venue_id)
 );
 
 -- Seats table 
 CREATE TABLE IF NOT EXISTS seats(
-    seat_id INT AUTO_INCREMENT PRIMARY KEY,
-    screen_id_ref INT,
+    seat_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    screen_id_ref CHAR(36) NOT NULL,
     row_label VARCHAR(5) NOT NULL,
     seat_number INT NOT NULL,
     seat_type VARCHAR(50),
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS seats(
 
 -- Events table 
 CREATE TABLE IF NOT EXISTS events(
-    event_id INT AUTO_INCREMENT PRIMARY KEY,
+    event_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     event_name VARCHAR(100) NOT NULL,
     event_description VARCHAR(500) NOT NULL,
     event_type VARCHAR(50) NOT NULL,
@@ -59,9 +59,9 @@ CREATE TABLE IF NOT EXISTS events(
 
 -- Show table
 CREATE TABLE IF NOT EXISTS shows (
-    show_id INT AUTO_INCREMENT PRIMARY KEY,
-    event_id_ref INT NOT NULL,
-    screen_id_ref INT NOT NULL,
+    show_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    event_id_ref CHAR(36) NOT NULL,
+    screen_id_ref CHAR(36) NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
     show_date DATE NOT NULL,
@@ -73,9 +73,9 @@ CREATE TABLE IF NOT EXISTS shows (
 
 -- Bookings table
 CREATE TABLE IF NOT EXISTS bookings (
-    booking_id INT AUTO_INCREMENT PRIMARY KEY,
-    booked_by INT NOT NULL,
-    show_id INT NOT NULL,
+    booking_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    booked_by CHAR(36) NOT NULL,
+    show_id CHAR(36) NOT NULL,
     total_amount DECIMAL(10,2) NOT NULL,
     status ENUM('BOOKED', 'PROCESSING', 'FAILED')
         NOT NULL DEFAULT 'PROCESSING',
@@ -87,9 +87,9 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 -- Show seat
 CREATE TABLE IF NOT EXISTS show_seats (
-    show_seat_id INT AUTO_INCREMENT PRIMARY KEY,
-    show_id_ref INT NOT NULL,
-    seat_id_ref INT NOT NULL,
+    show_seat_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    show_id_ref CHAR(36) NOT NULL,
+    seat_id_ref CHAR(36) NOT NULL,
     status ENUM('BOOKED', 'LOCKED', 'OPEN')
         NOT NULL DEFAULT 'OPEN',
     price DECIMAL(10,2) NOT NULL,
@@ -102,9 +102,9 @@ CREATE TABLE IF NOT EXISTS show_seats (
 
 -- Booking seats table
 CREATE TABLE IF NOT EXISTS booking_seats (
-    booking_seat_id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_id_ref INT NOT NULL,
-    show_seat_id_ref INT NOT NULL,
+    booking_seat_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    booking_id_ref CHAR(36) NOT NULL,
+    show_seat_id_ref CHAR(36) NOT NULL,
     price DECIMAL(10,2) NOT NULL,
 
     UNIQUE (show_seat_id_ref),
@@ -114,8 +114,8 @@ CREATE TABLE IF NOT EXISTS booking_seats (
 );
 -- Payments table
 CREATE TABLE IF NOT EXISTS payment_info (
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
-    booking_id_ref INT NOT NULL,
+    payment_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    booking_id_ref CHAR(36) NOT NULL,
     transaction_id VARCHAR(255) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
