@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./Pages/HomePage.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import EventShowPage from "./Pages/ShowsPage.tsx";
+import SignupPage from "./Pages/SignupPage.tsx";
 
 const routes = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const routes = createBrowserRouter([
         element: <EventShowPage />,
       },
     ],
+  },
+  {
+    path: "/signup",
+    element: <SignupPage />,
   },
 ]);
 
