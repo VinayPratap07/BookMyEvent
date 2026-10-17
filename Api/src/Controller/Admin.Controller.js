@@ -2,7 +2,7 @@ const { pool } = require("../Database/Connection");
 
 async function createVenue(req, res) {
   const { venue_name, venue_address, maps_link } = req.body;
-  const { id } = req.user;
+  const id = "716cfdc0-ca32-11f1-8a16-a22f9dda96da";
 
   if (!venue_name || !venue_address || !maps_link) {
     return res.status(422).json({ message: "All fields are required" });

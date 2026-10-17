@@ -1,5 +1,5 @@
 const { pool } = require("../Database/Connection");
-const { createTokenForUser } = require("../Service/JWT_Authentication");
+const { createTokenForUser } = require("../Service/JWT_Authentication.Service");
 const { hashPassword, comparePassword } = require("../Utils/HashPassword");
 
 //Function to get user profile using user_id
