@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const {
-  getUser,
+  getCurrUser,
   registerUser,
   loginUser,
 } = require("../Controller/User.Auth.Controller");
@@ -9,7 +9,7 @@ const validateLogin = require("../Middleware/login.middleware");
 
 const router = Router();
 
-router.get("/me", getUser);
+router.get("/me", getCurrUser);
 router.post("/register", validateSignup, registerUser);
 router.post("/login", validateLogin, loginUser);
 

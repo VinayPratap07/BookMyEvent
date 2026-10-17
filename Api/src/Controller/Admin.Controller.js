@@ -2,14 +2,14 @@ const { pool } = require("../Database/Connection");
 
 async function createVenue(req, res) {
   const { venue_name, venue_address, maps_link } = req.body;
-  const id = "716cfdc0-ca32-11f1-8a16-a22f9dda96da";
+  const { id } = req.user;
 
   if (!venue_name || !venue_address || !maps_link) {
     return res.status(422).json({ message: "All fields are required" });
   }
 
   try {
-    const venue = await pool.query(
+    await pool.query(
       `INSERT INTO venue (venue_name, venue_address, venue_map_link, owned_by)
             VALUES(?,?,?,?)`,
       [venue_name, venue_address, maps_link, id],
@@ -17,7 +17,6 @@ async function createVenue(req, res) {
 
     return res.status(201).json({
       message: "Venue created successfully",
-      venueId: venue.insertId,
     });
   } catch (error) {
     if (error.code === "ER_DUP_ENTRY") {
@@ -42,7 +41,7 @@ async function createScreen(req, res) {
   }
 
   try {
-    const screen = await pool.query(
+    await pool.query(
       `INSERT INTO screens(screen_name, venue_id_ref, total_seats)
             VALUES(?,?,?)`,
       [screen_name, venue_id, total_seats],
@@ -50,7 +49,6 @@ async function createScreen(req, res) {
 
     return res.status(201).json({
       message: "screen created successfully",
-      screenId: screen.insertId,
     });
   } catch (error) {
     if (error.code === "ER_DUP_ENTRY") {

@@ -3,20 +3,14 @@ const { createTokenForUser } = require("../Service/JWT_Authentication.Service");
 const { hashPassword, comparePassword } = require("../Utils/HashPassword");
 
 //Function to get user profile using user_id
-//Test function right now
-async function getUser(req, res) {
-  const { identfier } = req.body;
+async function getCurrUser(req, res) {
+  const { id } = req.user;
 
-  if (!identfier) {
-    return res.status(422).json({
-      message: "All fields are required",
-    });
-  }
   try {
     const [user] = await pool.query(
       `select * from users
-        where email = ?`,
-      [identfier],
+        where user_id = ?`,
+      [id],
     );
 
     return res.status(200).json({ user: user });
@@ -120,4 +114,4 @@ async function loginUser(req, res) {
   }
 }
 
-module.exports = { getUser, registerUser, loginUser };
+module.exports = { getCurrUser, registerUser, loginUser };

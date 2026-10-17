@@ -2,7 +2,10 @@ require("dotenv").config();
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const { connectDB } = require("./Database/Connection");
-const { authenticationMiddleware } = require("./Middleware/auth.middleware");
+const {
+  authenticationMiddleware,
+  forceAuthentication,
+} = require("./Middleware/auth.middleware");
 const cors = require("cors");
 
 //Routes
@@ -10,6 +13,7 @@ const userRoutes = require("./Routes/User.Auth.Routes");
 const adminRoutes = require("./Routes/Admin.Routes");
 const showRoutes = require("./Routes/Show.Routes");
 const paymentRoutes = require("./Routes/Payment.Routes");
+const { adminAuthorization } = require("./Middleware/authorization.middleware");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -32,7 +36,7 @@ app.use(cors(corsOptions));
 
 //Routes
 app.use("/api/user", userRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/admin", forceAuthentication, adminAuthorization, adminRoutes);
 app.use("/api/show", showRoutes);
 app.use("/api/payment", paymentRoutes);
 
