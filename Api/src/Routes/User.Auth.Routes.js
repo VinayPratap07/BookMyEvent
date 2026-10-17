@@ -5,11 +5,12 @@ const {
   loginUser,
 } = require("../Controller/User.Auth.Controller");
 const validateSignup = require("../Middleware/signup.middleware");
+const validateLogin = require("../Middleware/login.middleware");
 
 const router = Router();
 
 router.get("/me", getUser);
 router.post("/register", validateSignup, registerUser);
-router.post("/login", loginUser);
+router.post("/login", validateLogin, loginUser);
 
 module.exports = router;
