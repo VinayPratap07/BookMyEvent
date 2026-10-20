@@ -8,19 +8,18 @@ async function getCurrUser(req, res) {
 
   try {
     const [user] = await pool.query(
-      `select * from users
+      `select user_id, full_name, email, phone_no, created_at from users
         where user_id = ?`,
       [id],
     );
 
     return res.status(200).json({ user: user });
-  } catch (error) {}
-
-  console.error("Registration error:", error.message);
-
-  return res.status(500).json({
-    message: "Internal server error",
-  });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
 }
 
 //Function to register new user
