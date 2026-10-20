@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
   FiUser,
   FiMail,
@@ -10,27 +11,11 @@ import {
 } from "react-icons/fi";
 import { FaGoogle, FaApple } from "react-icons/fa";
 import { HiTicket } from "react-icons/hi2";
-
-interface SignupFormData {
-  fullName: string;
-  email: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-  agreeToTerms: boolean;
-}
-
-interface FormErrors {
-  fullName?: string;
-  email?: string;
-  phone?: string;
-  password?: string;
-  confirmPassword?: string;
-  agreeToTerms?: string;
-}
+import { signupUser } from "../API/UserApi";
+import { useNavigate } from "react-router-dom";
 
 function SignupPage() {
-  const [formData, setFormData] = useState<SignupFormData>({
+  const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phone: "",
@@ -39,14 +24,31 @@ function SignupPage() {
     agreeToTerms: false,
   });
 
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
-  // Compute password strength (0 to 4)
-  const getPasswordStrength = (pass: string): number => {
+  const { mutate, isPending } = useMutation({
+    mutationFn: signupUser,
+    onSuccess: () => {
+      setFormData({
+        fullName: "",
+        email: "",
+        phone: "",
+        password: "",
+        confirmPassword: "",
+        agreeToTerms: false,
+      });
+      navigate("/login");
+    },
+    onError: (error: Error) => {
+      console.log("Error response:", error.message);
+      setErrors((prev) => ({ ...prev, api: error.message }));
+    },
+  });
+
+  const getPasswordStrength = (pass: string) => {
     let strength = 0;
     if (pass.length >= 8) strength++;
     if (/[A-Z]/.test(pass)) strength++;
@@ -72,41 +74,40 @@ function SignupPage() {
     return "Strong";
   };
 
-  const validate = (): boolean => {
-    const newErrors: FormErrors = {};
+  const validate = () => {
+    const nextErrors: Record<string, string> = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
-    }
-
+    if (!formData.fullName.trim())
+      nextErrors.fullName = "Full name is required";
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      nextErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Please enter a valid email address";
+      nextErrors.email = "Please enter a valid email address";
     }
 
+    const cleanPhone = formData.phone.replace(/[\s-]/g, "");
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.phone.replace(/[\s-]/g, ""))) {
-      newErrors.phone = "Please enter a valid 10-digit number";
+      nextErrors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(cleanPhone)) {
+      nextErrors.phone = "Please enter a valid 10-digit number";
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
+      nextErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      nextErrors.password = "Password must be at least 8 characters";
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      nextErrors.confirmPassword = "Passwords do not match";
     }
 
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = "You must agree to the Terms & Privacy Policy";
+      nextErrors.agreeToTerms = "You must agree to the Terms & Privacy Policy";
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,15 +117,23 @@ function SignupPage() {
       [name]: type === "checkbox" ? checked : value,
     }));
 
-    // Clear individual error as the user types
-    if (errors[name as keyof FormErrors]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
+    if (errors[name] || errors.api) {
+      setErrors((prev) => ({ ...prev, [name]: undefined, api: undefined }));
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
+
+    console.log(formData);
+
+    mutate({
+      fullName: formData.fullName.trim(),
+      email: formData.email.trim(),
+      phoneNo: formData.phone,
+      password: formData.password,
+    });
   };
 
   return (
@@ -144,9 +153,8 @@ function SignupPage() {
           </p>
         </div>
 
-        {/* Card Container */}
+        {/* Form Container */}
         <div className="mt-8 rounded-2xl border border-sky-100 bg-white p-6 shadow-sm sm:p-8">
-          {/* Social Signups */}
           <div className="grid grid-cols-2 gap-3">
             <button
               type="button"
@@ -171,7 +179,12 @@ function SignupPage() {
             </span>
           </div>
 
-          {/* Form */}
+          {errors.api && (
+            <div className="mb-4 rounded-lg border border-rose-200 bg-rose-50 p-2.5 text-xs text-rose-600">
+              {errors.api}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             {/* Full Name */}
             <div>
@@ -179,16 +192,15 @@ function SignupPage() {
                 Full Name
               </label>
               <div className="relative mt-1">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                  <FiUser className="h-4 w-4" />
-                </div>
+                <FiUser className="pointer-events-none absolute inset-y-0 left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                 <input
                   type="text"
                   name="fullName"
+                  disabled={isPending}
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="e.g. Rahul Sharma"
-                  className={`w-full rounded-lg border bg-white py-2 pr-3 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 sm:text-sm ${
+                  className={`w-full rounded-lg border bg-white py-2 pr-3 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 disabled:bg-slate-50 sm:text-sm ${
                     errors.fullName
                       ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                       : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
@@ -202,22 +214,21 @@ function SignupPage() {
               )}
             </div>
 
-            {/* Email Address */}
+            {/* Email */}
             <div>
               <label className="block text-xs font-semibold text-slate-700">
                 Email Address
               </label>
               <div className="relative mt-1">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                  <FiMail className="h-4 w-4" />
-                </div>
+                <FiMail className="pointer-events-none absolute inset-y-0 left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                 <input
                   type="email"
                   name="email"
+                  disabled={isPending}
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="name@example.com"
-                  className={`w-full rounded-lg border bg-white py-2 pr-3 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 sm:text-sm ${
+                  className={`w-full rounded-lg border bg-white py-2 pr-3 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 disabled:bg-slate-50 sm:text-sm ${
                     errors.email
                       ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                       : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
@@ -229,7 +240,7 @@ function SignupPage() {
               )}
             </div>
 
-            {/* Phone Number */}
+            {/* Phone */}
             <div>
               <label className="block text-xs font-semibold text-slate-700">
                 Phone Number
@@ -239,16 +250,15 @@ function SignupPage() {
                   +91
                 </span>
                 <div className="relative w-full">
-                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                    <FiPhone className="h-3.5 w-3.5" />
-                  </div>
+                  <FiPhone className="pointer-events-none absolute inset-y-0 left-3 top-1/2 -translate-y-1/2 text-slate-400 h-3.5 w-3.5" />
                   <input
                     type="tel"
                     name="phone"
+                    disabled={isPending}
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="98765 43210"
-                    className={`w-full rounded-r-lg border bg-white py-2 pr-3 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 sm:text-sm ${
+                    className={`w-full rounded-r-lg border bg-white py-2 pr-3 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 disabled:bg-slate-50 sm:text-sm ${
                       errors.phone
                         ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                         : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
@@ -267,16 +277,15 @@ function SignupPage() {
                 Password
               </label>
               <div className="relative mt-1">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                  <FiLock className="h-4 w-4" />
-                </div>
+                <FiLock className="pointer-events-none absolute inset-y-0 left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
+                  disabled={isPending}
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="At least 8 characters"
-                  className={`w-full rounded-lg border bg-white py-2 pr-9 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 sm:text-sm ${
+                  className={`w-full rounded-lg border bg-white py-2 pr-9 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 disabled:bg-slate-50 sm:text-sm ${
                     errors.password
                       ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                       : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
@@ -285,8 +294,7 @@ function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
-                  aria-label="Toggle password visibility"
+                  className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600"
                 >
                   {showPassword ? (
                     <FiEyeOff className="h-4 w-4" />
@@ -296,7 +304,6 @@ function SignupPage() {
                 </button>
               </div>
 
-              {/* Password strength visual indicator */}
               {formData.password && (
                 <div className="mt-2">
                   <div className="flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-slate-100">
@@ -319,7 +326,6 @@ function SignupPage() {
                   </div>
                 </div>
               )}
-
               {errors.password && (
                 <p className="mt-1 text-[11px] text-rose-500">
                   {errors.password}
@@ -333,16 +339,15 @@ function SignupPage() {
                 Confirm Password
               </label>
               <div className="relative mt-1">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                  <FiLock className="h-4 w-4" />
-                </div>
+                <FiLock className="pointer-events-none absolute inset-y-0 left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   name="confirmPassword"
+                  disabled={isPending}
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Re-enter your password"
-                  className={`w-full rounded-lg border bg-white py-2 pr-9 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 sm:text-sm ${
+                  className={`w-full rounded-lg border bg-white py-2 pr-9 pl-9 text-xs text-slate-800 placeholder-slate-400 outline-none transition focus:ring-2 disabled:bg-slate-50 sm:text-sm ${
                     errors.confirmPassword
                       ? "border-rose-300 focus:border-rose-400 focus:ring-rose-100"
                       : "border-slate-200 focus:border-sky-400 focus:ring-sky-100"
@@ -351,8 +356,7 @@ function SignupPage() {
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((prev) => !prev)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
-                  aria-label="Toggle confirm password visibility"
+                  className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600"
                 >
                   {showConfirmPassword ? (
                     <FiEyeOff className="h-4 w-4" />
@@ -368,12 +372,13 @@ function SignupPage() {
               )}
             </div>
 
-            {/* Terms and Conditions */}
+            {/* Terms Checkbox */}
             <div className="pt-1">
               <label className="flex items-start gap-2.5 cursor-pointer">
                 <input
                   type="checkbox"
                   name="agreeToTerms"
+                  disabled={isPending}
                   checked={formData.agreeToTerms}
                   onChange={handleChange}
                   className="mt-0.5 h-4 w-4 rounded border-slate-300 text-sky-500 focus:ring-sky-400"
@@ -403,13 +408,13 @@ function SignupPage() {
               )}
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isPending}
               className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-sky-400 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 active:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-70"
             >
-              {isSubmitting ? (
+              {isPending ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   <span>Creating Account...</span>
@@ -424,11 +429,11 @@ function SignupPage() {
           </form>
         </div>
 
-        {/* Footer switch back */}
+        {/* Footer switch */}
         <p className="mt-6 text-center text-xs text-slate-500">
           Already have an account?{" "}
           <button
-            type="submit"
+            type="button"
             className="font-semibold text-sky-600 transition hover:text-sky-700 hover:underline focus:outline-none"
           >
             Sign In

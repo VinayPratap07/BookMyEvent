@@ -217,13 +217,13 @@ export const EventShowPage: React.FC = () => {
       <section className="border-b border-sky-100 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
-            Street Fighter -{" "}
+            {data.shows[0].event_name} -{" "}
             <span className="font-medium text-slate-600">(English)</span>
           </h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
-              Movie runtime: 1h 59m
+              {data.shows[0].event_duration}
             </span>
             <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
               UA16+

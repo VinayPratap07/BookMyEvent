@@ -16,7 +16,7 @@ function Card({ shows }: HomeShowProps) {
             src={event_image}
             alt={event_name}
             loading="lazy"
-            className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
 
