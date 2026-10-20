@@ -73,13 +73,11 @@ async function addSeatesInScreen(req, res) {
   }
 
   try {
-    for (let i = 1; i <= seat_number; i++) {
-      await pool.query(
-        `INSERT INTO seats(screen_id_ref, row_label, seat_number, seat_type)
+    await pool.query(
+      `INSERT INTO seats(screen_id_ref, row_label, seat_number, seat_type)
                 VALUES(?,?,?,?)`,
-        [screen_id, row_label, i, seat_type],
-      );
-    }
+      [screen_id, row_label, seat_number, seat_type],
+    );
 
     return res.status(201).json({ message: "Added" });
   } catch (error) {
@@ -160,10 +158,32 @@ async function createShow(req, res) {
   }
 }
 
+async function setSeatPricingForShow(req, res) {
+  const { show_id, seat_id, price } = req.body;
+
+  if (!show_id || !seat_id || !price) {
+    return res.status(422);
+  }
+
+  try {
+    await pool.query(
+      `INSERT INTO show_seats(show_id_ref, seat_id_ref, price)
+        VALUES(?,?,?)`,
+      [show_id, seat_id, price],
+    );
+
+    return res.status(201).json({ message: "Seat added into the show" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Failed to price" });
+  }
+}
+
 module.exports = {
   createVenue,
   createScreen,
   addSeatesInScreen,
   addEvent,
   createShow,
+  setSeatPricingForShow,
 };

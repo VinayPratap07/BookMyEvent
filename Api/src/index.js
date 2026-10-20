@@ -10,7 +10,7 @@ const cors = require("cors");
 
 //Routes
 const userRoutes = require("./Routes/User.Auth.Routes");
-const adminRoutes = require("./Routes/Admin.Routes");
+const adminRoutes = require("./Routes/Organiser.Routes");
 const showRoutes = require("./Routes/Show.Routes");
 const paymentRoutes = require("./Routes/Payment.Routes");
 const { adminAuthorization } = require("./Middleware/authorization.middleware");
