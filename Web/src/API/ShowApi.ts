@@ -15,8 +15,8 @@ export const getAllEvents = async () => {
 
 //Get all shows for a particular event using eventID
 //Harded coded id for testing
-export const getAllShows = async () => {
-  const res = await api.get(`/getShows/1`, {
+export const getAllShows = async (id: string) => {
+  const res = await api.get(`/getShows/${id}`, {
     withCredentials: true,
   });
 

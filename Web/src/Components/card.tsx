@@ -9,7 +9,7 @@ function Card({ shows }: HomeShowProps) {
       key={event_id}
       className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-sky-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky-300 hover:shadow-lg"
     >
-      <Link to={`/${event_id}`}>
+      <Link to={`/shows/${event_id}`}>
         {/* Thumbnail */}
         <div className="relative aspect-[2/3] w-full overflow-hidden bg-slate-100">
           <img

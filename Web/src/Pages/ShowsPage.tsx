@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllShows } from "../API/ShowApi";
 import LoadingScreen from "../Components/Loading";
 import ErrorState from "../Components/Error";
+import { useParams } from "react-router-dom";
 
 // --- Types ---
 export interface Showtime {
@@ -187,9 +188,15 @@ export const EventShowPage: React.FC = () => {
     }
   };
 
+  const { id } = useParams<{ id: string }>();
+
+  if (!id) {
+    return;
+  }
+
   const { isLoading, error, data } = useQuery({
-    queryKey: ["AvailableShows"],
-    queryFn: getAllShows,
+    queryKey: ["AvailableShows", id],
+    queryFn: () => getAllShows(id),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });

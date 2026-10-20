@@ -18,7 +18,7 @@ const routes = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/shows",
+        path: "/shows/:id",
         element: <EventShowPage />,
       },
     ],
