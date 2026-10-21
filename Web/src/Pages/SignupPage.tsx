@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
   FiUser,
@@ -12,7 +12,7 @@ import {
 import { FaGoogle, FaApple } from "react-icons/fa";
 import { HiTicket } from "react-icons/hi2";
 import { signupUser } from "../API/UserApi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function SignupPage() {
   const [formData, setFormData] = useState({
@@ -432,12 +432,12 @@ function SignupPage() {
         {/* Footer switch */}
         <p className="mt-6 text-center text-xs text-slate-500">
           Already have an account?{" "}
-          <button
-            type="button"
+          <Link
+            to="/signin"
             className="font-semibold text-sky-600 transition hover:text-sky-700 hover:underline focus:outline-none"
           >
             Sign In
-          </button>
+          </Link>
         </p>
       </div>
     </div>

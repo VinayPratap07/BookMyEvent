@@ -1,4 +1,5 @@
 require("dotenv").config();
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const express = require("express");
 const { connectDB } = require("./Database/Connection");
@@ -6,16 +7,15 @@ const {
   authenticationMiddleware,
   forceAuthentication,
 } = require("./Middleware/auth.middleware");
-const cors = require("cors");
+const {
+  organiserAuthorization,
+} = require("./Middleware/authorization.middleware");
 
 //Routes
 const userRoutes = require("./Routes/User.Auth.Routes");
 const organiserRoutes = require("./Routes/Organiser.Routes");
 const showRoutes = require("./Routes/Show.Routes");
 const paymentRoutes = require("./Routes/Payment.Routes");
-const {
-  organiserAuthorization,
-} = require("./Middleware/authorization.middleware");
 
 const app = express();
 const PORT = process.env.PORT;

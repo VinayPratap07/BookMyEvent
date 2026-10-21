@@ -14,3 +14,12 @@ export const signupUser = async (data: {
 
   return res.data;
 };
+
+export const loginUser = async (data: {
+  identifier: string;
+  password: string;
+}) => {
+  const res = await api.post("/login", data, { withCredentials: true });
+
+  return res.data;
+};
