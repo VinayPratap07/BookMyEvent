@@ -66,23 +66,84 @@ async function createScreen(req, res) {
 }
 
 async function addSeatesInScreen(req, res) {
-  const { screen_id, row_label, seat_number, seat_type } = req.body;
+  const { screen_id, rows } = req.body;
 
-  if (!screen_id || !row_label || !seat_number || !seat_type) {
-    return res.status(422).json({ message: "All fields are required" });
+  if (!screen_id || !Array.isArray(rows) || rows.length === 0) {
+    return res.status(422).json({
+      message: "Screen ID and rows are required",
+    });
+  }
+
+  // Validate input
+  for (const row of rows) {
+    const { row_label, total_seats, seat_type } = row;
+
+    if (
+      typeof row_label !== "string" ||
+      !row_label.trim() ||
+      row_label.trim().length > 5 ||
+      !Number.isInteger(total_seats) ||
+      total_seats <= 0 ||
+      total_seats > 500 ||
+      (seat_type != null &&
+        (typeof seat_type !== "string" || seat_type.length > 50))
+    ) {
+      return res.status(422).json({
+        message: "Invalid row label, seat count, or seat type",
+      });
+    }
+  }
+
+  // Prevent duplicate row labels in the same request
+  const labels = rows.map((row) => row.row_label.trim().toUpperCase());
+
+  if (new Set(labels).size !== labels.length) {
+    return res.status(422).json({
+      message: "Row labels must be unique",
+    });
   }
 
   try {
+    const values = [];
+
+    for (const row of rows) {
+      const row_label = row.row_label.trim();
+      const { total_seats, seat_type } = row;
+
+      for (let seat_number = 1; seat_number <= total_seats; seat_number++) {
+        values.push([screen_id, row_label, seat_number, seat_type ?? null]);
+      }
+    }
+
     await pool.query(
-      `INSERT INTO seats(screen_id_ref, row_label, seat_number, seat_type)
-                VALUES(?,?,?,?)`,
-      [screen_id, row_label, seat_number, seat_type],
+      `INSERT INTO seats
+        (screen_id_ref, row_label, seat_number, seat_type)
+       VALUES ?`,
+      [values],
     );
 
-    return res.status(201).json({ message: "Added" });
+    return res.status(201).json({
+      message: "Seats created successfully",
+      total_seats_added: values.length,
+    });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Failed to add seats" });
+    console.error(error);
+
+    if (error.code === "ER_NO_REFERENCED_ROW_2") {
+      return res.status(404).json({
+        message: "Screen not found",
+      });
+    }
+
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({
+        message: "Some seats already exist",
+      });
+    }
+
+    return res.status(500).json({
+      message: "Failed to add seats",
+    });
   }
 }
 
