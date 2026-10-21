@@ -10,10 +10,12 @@ const cors = require("cors");
 
 //Routes
 const userRoutes = require("./Routes/User.Auth.Routes");
-const adminRoutes = require("./Routes/Organiser.Routes");
+const organiserRoutes = require("./Routes/Organiser.Routes");
 const showRoutes = require("./Routes/Show.Routes");
 const paymentRoutes = require("./Routes/Payment.Routes");
-const { adminAuthorization } = require("./Middleware/authorization.middleware");
+const {
+  organiserAuthorization,
+} = require("./Middleware/authorization.middleware");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -36,7 +38,12 @@ app.use(cors(corsOptions));
 
 //Routes
 app.use("/api/user", userRoutes);
-app.use("/api/admin", forceAuthentication, adminAuthorization, adminRoutes);
+app.use(
+  "/api/organiser",
+  forceAuthentication,
+  organiserAuthorization,
+  organiserRoutes,
+);
 app.use("/api/show", showRoutes);
 app.use("/api/payment", paymentRoutes);
 

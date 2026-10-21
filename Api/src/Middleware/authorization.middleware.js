@@ -1,4 +1,4 @@
-async function adminAuthorization(req, res, next) {
+async function organiserAuthorization(req, res, next) {
   if (req.user.role !== "ADMIN") {
     return res.status(403).json({ message: "Unauthorized user" });
   }
@@ -6,4 +6,4 @@ async function adminAuthorization(req, res, next) {
   next();
 }
 
-module.exports = { adminAuthorization };
+module.exports = { organiserAuthorization };
