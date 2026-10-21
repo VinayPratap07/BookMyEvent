@@ -220,23 +220,91 @@ async function createShow(req, res) {
 }
 
 async function setSeatPricingForShow(req, res) {
-  const { show_id, seat_id, price } = req.body;
+  const { show_id, seat_prices } = req.body;
 
-  if (!show_id || !seat_id || !price) {
-    return res.status(422);
+  if (!show_id || !Array.isArray(seat_prices) || seat_prices.length === 0) {
+    return res.status(422).json({
+      message: "Show ID and seat prices are required",
+    });
+  }
+
+  // Validate all seat types and prices
+  const seenTypes = new Set();
+
+  for (const item of seat_prices) {
+    const { seat_type, price } = item;
+
+    if (
+      typeof seat_type !== "string" ||
+      !seat_type.trim() ||
+      !Number.isFinite(price) ||
+      price < 0
+    ) {
+      return res.status(422).json({
+        message: "Each seat type must have a valid price",
+      });
+    }
+
+    const normalizedType = seat_type.trim().toLowerCase();
+
+    if (seenTypes.has(normalizedType)) {
+      return res.status(422).json({
+        message: "Duplicate seat types are not allowed",
+      });
+    }
+
+    seenTypes.add(normalizedType);
   }
 
   try {
-    await pool.query(
-      `INSERT INTO show_seats(show_id_ref, seat_id_ref, price)
-        VALUES(?,?,?)`,
-      [show_id, seat_id, price],
-    );
+    // Confirm that the show exists
+    // const [shows] = await pool.query(
+    //   `SELECT show_id FROM shows WHERE show_id = ?`,
+    //   [show_id],
+    // );
 
-    return res.status(201).json({ message: "Seat added into the show" });
+    // if (shows.length === 0) {
+    //   await connection.rollback();
+
+    //   return res.status(404).json({
+    //     message: "Show not found",
+    //   });
+    // }
+
+    let totalSeatsPriced = 0;
+
+    for (const item of seat_prices) {
+      const { seat_type, price } = item;
+
+      // Assign the price to every seat of this type
+      // belonging to this screen's show
+      const [result] = await pool.query(
+        `INSERT INTO show_seats
+          (show_id_ref, seat_id_ref, price)
+         SELECT ?, s.seat_id, ?
+         FROM seats s
+         INNER JOIN shows sh
+           ON sh.show_id = ?
+         WHERE s.screen_id_ref = sh.screen_id_ref
+           AND LOWER(s.seat_type) = LOWER(?)
+         ON DUPLICATE KEY UPDATE
+           price = VALUES(price)`,
+        [show_id, price, show_id, seat_type.trim()],
+      );
+
+      totalSeatsPriced += result.affectedRows;
+    }
+
+    return res.status(200).json({
+      message: "Seat pricing configured successfully",
+      total_seats_affected: totalSeatsPriced,
+    });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Failed to price" });
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to configure seat pricing",
+    });
   }
 }
 
