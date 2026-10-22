@@ -73,4 +73,26 @@ async function getAvailableShows(req, res) {
   }
 }
 
-module.exports = { getAvailableEvents, getAvailableShows };
+async function getSeats(req, res) {
+  const showId = req.params.id;
+
+  if (!showId) {
+    return res.status(404).json({ message: "Show not found" });
+  }
+
+  try {
+    const [seats] = await pool.query(
+      `SELECT * FROM show_seats 
+      WHERE show_id_ref = ?`,
+      [showId],
+    );
+
+    if (!seats) {
+      return res.status(404).json({ message: "Seats not found" });
+    }
+
+    return res.status(200).json({ seats: seats });
+  } catch (error) {}
+}
+
+module.exports = { getAvailableEvents, getAvailableShows, getSeats };
