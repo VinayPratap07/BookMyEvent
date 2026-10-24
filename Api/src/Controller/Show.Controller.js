@@ -82,8 +82,11 @@ async function getSeats(req, res) {
 
   try {
     const [seats] = await pool.query(
-      `SELECT * FROM show_seats 
-      WHERE show_id_ref = ?`,
+      `SELECT * 
+       FROM show_seats 
+       LEFT JOIN seats 
+        ON show_seats.seat_id_ref = seats.seat_id
+       WHERE show_seats.show_id_ref = ?;;`,
       [showId],
     );
 
@@ -92,7 +95,9 @@ async function getSeats(req, res) {
     }
 
     return res.status(200).json({ seats: seats });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 }
 
 module.exports = { getAvailableEvents, getAvailableShows, getSeats };
