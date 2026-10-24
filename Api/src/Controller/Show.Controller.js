@@ -82,11 +82,17 @@ async function getSeats(req, res) {
 
   try {
     const [seats] = await pool.query(
-      `SELECT * 
-       FROM show_seats 
-       LEFT JOIN seats 
-        ON show_seats.seat_id_ref = seats.seat_id
-       WHERE show_seats.show_id_ref = ?;;`,
+      `SELECT 
+        ss.show_seat_id,
+        ss.status,
+        ss.price,
+        s.row_label,
+        s.seat_number,
+        s.seat_type
+       FROM show_seats AS ss
+       INNER JOIN seats AS s
+        ON ss.seat_id_ref = s.seat_id
+       WHERE ss.show_id_ref = ?;`,
       [showId],
     );
 
