@@ -5,7 +5,11 @@ import type {
   GroupedRow,
   SeatTierSection,
 } from "../API/API_Response";
-import SeatItem from "../Components/SeatComponent";
+import SeatComponent from "../Components/SeatComponent";
+import { useQuery } from "@tanstack/react-query";
+import { getShowSeats } from "../API/ShowApi";
+import { useParams } from "react-router-dom";
+import LoadingScreen from "../Components/Loading";
 
 // Mock API generator simulating real backend response
 const fetchShowSeatsMock = async (): Promise<ApiShowSeat[]> => {
@@ -64,6 +68,20 @@ export const SeatPage: React.FC = () => {
   const [seats, setSeats] = useState<ApiShowSeat[]>([]);
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const { id } = useParams();
+  if (!id) {
+    return;
+  }
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["showSeats", id],
+    queryFn: () => getShowSeats(id),
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+  });
+
+  console.log(data);
 
   // Fetch seats data on mount
   useEffect(() => {
@@ -149,12 +167,12 @@ export const SeatPage: React.FC = () => {
     return selectedSeats.reduce((sum, s) => sum + parseFloat(s.price), 0);
   }, [selectedSeats]);
 
-  if (loading) {
-    return (
-      <div className="flex h-96 w-full items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-sky-400 border-t-transparent" />
-      </div>
-    );
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return <div>Error...</div>;
   }
 
   return (
@@ -218,7 +236,7 @@ export const SeatPage: React.FC = () => {
                           const addAisleGap = index === 5 || index === 11;
                           return (
                             <React.Fragment key={seat.show_seat_id}>
-                              <SeatItem
+                              <SeatComponent
                                 seat={seat}
                                 isSelected={selectedSeatIds.includes(
                                   seat.show_seat_id,

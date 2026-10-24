@@ -6,7 +6,7 @@ interface SeatItemProps {
   onSelect: (seat: ApiShowSeat) => void;
 }
 
-function SeatItem({ seat, isSelected, onSelect }: SeatItemProps) {
+function SeatComponent({ seat, isSelected, onSelect }: SeatItemProps) {
   const isAvailable = seat.status === "OPEN";
   const formattedNumber =
     seat.seat_number < 10 ? `0${seat.seat_number}` : `${seat.seat_number}`;
@@ -43,4 +43,4 @@ function SeatItem({ seat, isSelected, onSelect }: SeatItemProps) {
   );
 }
 
-export default SeatItem;
+export default SeatComponent;
