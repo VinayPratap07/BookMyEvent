@@ -1,155 +1,69 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { FiArrowLeft, FiCheck, FiInfo } from "react-icons/fi";
-import type {
-  ApiShowSeat,
-  GroupedRow,
-  SeatTierSection,
-} from "../API/API_Response";
+import type { ApiShowSeat, SeatTierSection } from "../API/API_Response";
 import SeatComponent from "../Components/SeatComponent";
 import { useQuery } from "@tanstack/react-query";
 import { getShowSeats } from "../API/ShowApi";
 import { useParams } from "react-router-dom";
 import LoadingScreen from "../Components/Loading";
 
-// Mock API generator simulating real backend response
-const fetchShowSeatsMock = async (): Promise<ApiShowSeat[]> => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      const seatLayout: {
-        type: string;
-        price: string;
-        rows: string[];
-        seatsPerRow: number;
-      }[] = [
-        { type: "Recliner", price: "1000.00", rows: ["Q"], seatsPerRow: 16 },
-        {
-          type: "Prime",
-          price: "450.00",
-          rows: ["P", "N", "M"],
-          seatsPerRow: 18,
-        },
-        {
-          type: "Classic",
-          price: "250.00",
-          rows: ["L", "K", "J", "H", "G"],
-          seatsPerRow: 20,
-        },
-      ];
-
-      const mockData: ApiShowSeat[] = [];
-
-      seatLayout.forEach(({ type, price, rows, seatsPerRow }) => {
-        rows.forEach((row) => {
-          for (let i = 1; i <= seatsPerRow; i++) {
-            // Simulated booked seats
-            const isTaken =
-              (row === "P" && (i === 5 || i === 6 || i === 12)) ||
-              (row === "Q" && (i === 8 || i === 9)) ||
-              (row === "G" && (i === 1 || i === 2 || i === 3));
-
-            mockData.push({
-              show_seat_id: `seat-${row}-${i}`,
-              status: isTaken ? "BOOKED" : "OPEN",
-              price,
-              row_label: row,
-              seat_number: i,
-              seat_type: type,
-            });
-          }
-        });
-      });
-
-      resolve(mockData);
-    }, 400);
-  });
-};
-
 function SeatPage() {
-  const [seats, setSeats] = useState<ApiShowSeat[]>([]);
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
   const { id } = useParams();
-  if (!id) {
-    return;
-  }
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["showSeats", id],
-    queryFn: () => getShowSeats(id),
+    queryFn: () => getShowSeats(id!),
     refetchInterval: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
 
-  console.log(data);
-
-  // Fetch seats data on mount
-  useEffect(() => {
-    const loadSeats = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchShowSeatsMock();
-        setSeats(data);
-      } catch (err) {
-        console.error("Failed to load seats", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSeats();
-  }, []);
-
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+  const seats = data.seats;
   // Organize seats by tier section -> rows -> ordered seats
   const tieredSections: SeatTierSection[] = useMemo(() => {
-    if (!seats.length) return [];
+    if (!seats?.length) return [];
 
     const sectionMap = new Map<
       string,
       { price: number; rowMap: Map<string, ApiShowSeat[]> }
     >();
 
-    seats.forEach((seat) => {
+    for (const seat of seats) {
       const type = seat.seat_type;
-      const numPrice = parseFloat(seat.price);
 
       if (!sectionMap.has(type)) {
-        sectionMap.set(type, { price: numPrice, rowMap: new Map() });
+        sectionMap.set(type, {
+          price: Number(seat.price),
+          rowMap: new Map(),
+        });
       }
 
       const rowMap = sectionMap.get(type)!.rowMap;
+
       if (!rowMap.has(seat.row_label)) {
         rowMap.set(seat.row_label, []);
       }
 
       rowMap.get(seat.row_label)!.push(seat);
-    });
+    }
 
-    const sections: SeatTierSection[] = [];
-
-    sectionMap.forEach((secData, seatType) => {
-      const rows: GroupedRow[] = [];
-      secData.rowMap.forEach((rowSeats, rowLabel) => {
-        // Sort seats left-to-right by seat_number
-        rows.push({
-          row_label: rowLabel,
-          seats: [...rowSeats].sort((a, b) => a.seat_number - b.seat_number),
-        });
-      });
-
-      // Keep rows in top-to-bottom layout
-      rows.sort((a, b) => b.row_label.localeCompare(a.row_label));
-
-      sections.push({
+    return [...sectionMap.entries()]
+      .map(([seatType, section]) => ({
         seat_type: seatType,
-        price: secData.price,
-        rows,
-      });
-    });
-
-    // High tier (e.g. Recliner) at the top, lower tiers toward the screen
-    return sections.sort((a, b) => b.price - a.price);
+        price: section.price,
+        rows: [...section.rowMap.entries()]
+          .map(([rowLabel, rowSeats]) => ({
+            row_label: rowLabel,
+            seats: [...rowSeats].sort((a, b) => a.seat_number - b.seat_number),
+          }))
+          .sort((a, b) => a.row_label.localeCompare(b.row_label)),
+      }))
+      .sort((a, b) => b.price - a.price);
   }, [seats]);
 
   const handleSeatClick = (seat: ApiShowSeat) => {
@@ -161,16 +75,17 @@ function SeatPage() {
   };
 
   const selectedSeats = useMemo(() => {
-    return seats.filter((s) => selectedSeatIds.includes(s.show_seat_id));
+    return seats.filter((s: ApiShowSeat) =>
+      selectedSeatIds.includes(s.show_seat_id),
+    );
   }, [seats, selectedSeatIds]);
 
   const totalPrice = useMemo(() => {
-    return selectedSeats.reduce((sum, s) => sum + parseFloat(s.price), 0);
+    return selectedSeats.reduce(
+      (sum: number, s: ApiShowSeat) => sum + parseFloat(s.price),
+      0,
+    );
   }, [selectedSeats]);
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
 
   if (error) {
     return <div>Error...</div>;
@@ -316,7 +231,7 @@ function SeatPage() {
                 :{" "}
                 <span className="text-slate-800">
                   {selectedSeats
-                    .map((s) => `${s.row_label}${s.seat_number}`)
+                    .map((s: ApiShowSeat) => `${s.row_label}${s.seat_number}`)
                     .join(", ")}
                 </span>
               </p>

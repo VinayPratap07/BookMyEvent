@@ -21,7 +21,7 @@ async function BookingSummary(req, res) {
       return res.status(409).json({ message: "Seat has been booked" });
     }
 
-    return res.status(200).json({ x: availability[0] });
+    return res.status(200).json({ availability: availability[0] });
   } catch (error) {
     return res.status(500).json({ err: error });
   }
