@@ -64,7 +64,7 @@ const fetchShowSeatsMock = async (): Promise<ApiShowSeat[]> => {
   });
 };
 
-export const SeatPage: React.FC = () => {
+function SeatPage() {
   const [seats, setSeats] = useState<ApiShowSeat[]>([]);
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -79,6 +79,7 @@ export const SeatPage: React.FC = () => {
     queryFn: () => getShowSeats(id),
     refetchInterval: false,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   console.log(data);
@@ -337,6 +338,6 @@ export const SeatPage: React.FC = () => {
       )}
     </div>
   );
-};
+}
 
 export default SeatPage;
