@@ -3,6 +3,6 @@ const { BookingSummary } = require("../Controller/Booking.Controller");
 
 const routes = Router();
 
-routes.post("/getBookingSummary", BookingSummary);
+routes.get("/getBookingSummary", BookingSummary);
 
 module.exports = routes;

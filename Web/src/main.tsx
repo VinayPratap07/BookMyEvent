@@ -9,6 +9,7 @@ import EventShowPage from "./Pages/ShowsPage.tsx";
 import SignupPage from "./Pages/SignupPage.tsx";
 import SigninPage from "./Pages/SigninPage.tsx";
 import SeatPage from "./Pages/SeatsPage.tsx";
+import SummaryPage from "./Pages/SummaryPage.tsx";
 
 const routes = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const routes = createBrowserRouter([
   {
     path: "/movies/show/:showId",
     element: <SeatPage />,
+  },
+  {
+    path: "/booking/summary",
+    element: <SummaryPage />,
   },
   {
     path: "/signup",

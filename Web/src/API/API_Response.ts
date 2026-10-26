@@ -29,3 +29,25 @@ export interface SeatTierSection {
   price: number;
   rows: GroupedRow[];
 }
+
+export interface BookingSummaryData {
+  show_id: string;
+  show_date: string;
+  start_time: string;
+  end_time: string;
+  event_id: string;
+  event_name: string;
+  event_description: string;
+  event_type: string;
+  event_image: string;
+  event_duration: string;
+  released_at: string;
+  min_age: number;
+  genere: string;
+  language: string;
+  show_seat_id: string;
+  price: string;
+  row_label: string;
+  seat_number: number;
+  seat_type: string;
+}
