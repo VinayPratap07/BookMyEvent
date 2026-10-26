@@ -6,7 +6,8 @@ async function getAvailableEvents(req, res) {
       `SELECT
             e.event_id,
             e.event_name,
-            e.event_image
+            e.event_image,
+            e.genere
         FROM events e
         JOIN shows s
             ON e.event_id = s.event_id_ref

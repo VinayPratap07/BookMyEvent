@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import type { HomeShowProps } from "../API/API_Response";
 
 function Card({ shows }: HomeShowProps) {
-  const { event_id, event_name, event_image } = shows;
+  const { event_id, event_name, event_image, genere } = shows;
 
   return (
     <article
@@ -19,12 +19,11 @@ function Card({ shows }: HomeShowProps) {
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>
-
-        {/* Card Body */}
         <div className="flex flex-1 flex-col p-4">
-          <h3 className="line-clamp-2 text-base font-semibold leading-6 text-slate-800 transition-colors duration-200 group-hover:text-sky-600">
+          <span className="text-lg font-semibold leading-6 text-slate-800 transition-colors duration-200 group-hover:text-sky-600">
             {event_name}
-          </h3>
+          </span>
+          <p className="text-sm text-gray-600">{genere}</p>
         </div>
       </Link>
     </article>
