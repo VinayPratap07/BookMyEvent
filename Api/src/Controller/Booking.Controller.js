@@ -9,9 +9,6 @@ async function BookingSummary(req, res) {
       .json({ message: "Seat id and show id are required" });
   }
 
-  console.log(showId);
-  console.log(seats);
-
   const seatIds = seats.split(",").filter(Boolean);
   const show = showId.replace("showId=", "");
 

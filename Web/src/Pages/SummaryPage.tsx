@@ -13,9 +13,14 @@ import { HiTicket } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getBookingSummary } from "../API/BookingApi";
 import LoadingScreen from "../Components/Loading";
+import { useState } from "react";
+import type { BookingSummaryApiResponse } from "../API/API_Response";
 
 function SummaryPage() {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
   const showQuery = searchParams.get("showId")?.trim() ?? "";
   const seatQuery =
     searchParams
@@ -24,24 +29,50 @@ function SummaryPage() {
       .map((id) => id.trim())
       .filter(Boolean) ?? [];
 
-  const navigate = useNavigate();
-
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["Booking Summary", showQuery, seatQuery],
-    queryFn: () => getBookingSummary(showQuery, seatQuery),
-    enabled: Boolean(showQuery && seatQuery.length > 0),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-  });
+  const { isLoading, isError, error, data } =
+    useQuery<BookingSummaryApiResponse>({
+      queryKey: ["Booking Summary", showQuery, seatQuery],
+      queryFn: () => getBookingSummary(showQuery, seatQuery),
+      enabled: Boolean(showQuery && seatQuery.length > 0),
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    });
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen message="Generating order review..." />;
   }
-  const summary = data.summary;
-  console.log(data);
+
+  if (isError || !data || !data.showSummary) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center p-6 text-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-rose-500">
+          <FiAlertCircle className="h-6 w-6" />
+        </div>
+        <h2 className="mt-4 text-lg font-bold text-slate-800">
+          Failed to load booking summary
+        </h2>
+        <p className="mt-1 max-w-sm text-sm text-slate-500">
+          {error instanceof Error
+            ? error.message
+            : "Missing or invalid show session. Please go back and select your seats again."}
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-sky-400 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-sky-500"
+        >
+          <FiArrowLeft className="h-4 w-4" />
+          <span>Return to Seat Layout</span>
+        </button>
+      </div>
+    );
+  }
+
+  const { showSummary, selectedSeats = [], subtotal } = data;
+  const event = showSummary.event;
 
   // Format date: "2026-11-06T18:30:00.000Z" -> "Fri, 06 Nov 2026"
-  const formattedDate = new Date(summary.show_date).toLocaleDateString(
+  const formattedDate = new Date(showSummary.show_date).toLocaleDateString(
     "en-IN",
     {
       weekday: "short",
@@ -52,19 +83,28 @@ function SummaryPage() {
   );
 
   // Format time string: "17:45:00" -> "05:45 PM"
-  //   const formatTime = (timeStr: string) => {
-  //     const [hours, minutes] = timeStr.split(":");
-  //     const h = parseInt(hours, 10);
-  //     const ampm = h >= 12 ? "PM" : "AM";
-  //     const formattedHour = h % 12 || 12;
-  //     return `${formattedHour}:${minutes} ${ampm}`;
-  //   };
+  const formatTime = (timeStr?: string) => {
+    if (!timeStr) return "";
+    const [hours, minutes] = timeStr.split(":");
+    const h = parseInt(hours, 10);
+    const ampm = h >= 12 ? "PM" : "AM";
+    const formattedHour = h % 12 || 12;
+    return `${formattedHour}:${minutes} ${ampm}`;
+  };
 
-  const handlePay = () => {};
+  // Financial calculations
+  const basePrice =
+    Number(subtotal) ||
+    selectedSeats.reduce((acc, s) => acc + Number(s.price), 0);
+  const convenienceFee = Math.round(basePrice * 0.08); // 8% fee
+  const gst = Math.round(convenienceFee * 0.18); // 18% GST on convenience fee
+  const totalAmount = basePrice + convenienceFee + gst;
 
-  if (error) {
-    return <div>Error...</div>;
-  }
+  const handlePay = () => {
+    setIsProcessing(true);
+    // Proceed to checkout integration
+    console.log("Proceeding to payment for seats:", selectedSeats);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50/60 pb-20 text-slate-800">
@@ -75,7 +115,7 @@ function SummaryPage() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              aria-label="Back to seats"
+              aria-label="Back to seat selection"
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-sky-50 hover:text-sky-600 focus:outline-none"
             >
               <FiArrowLeft className="h-4 w-4" />
@@ -102,54 +142,54 @@ function SummaryPage() {
                 {/* Poster */}
                 <div className="relative aspect-[2/3] w-32 shrink-0 overflow-hidden rounded-xl bg-slate-100 shadow-2xs sm:w-36">
                   <img
-                    src={summary.event_image}
-                    alt={summary.event_name}
+                    src={event.event_image}
+                    alt={event.event_name}
                     className="h-full w-full object-cover"
                   />
                   <span className="absolute top-2 left-2 rounded bg-slate-900/80 px-1.5 py-0.5 text-[10px] font-bold text-white uppercase backdrop-blur-xs">
-                    {summary.event_type}
+                    {event.event_type}
                   </span>
                 </div>
 
-                {/* Details */}
+                {/* Event Details */}
                 <div className="flex flex-1 flex-col justify-between">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="rounded-md border border-sky-200 bg-sky-50 px-2 py-0.5 text-xs font-semibold text-sky-700">
-                        {summary.min_age}+
+                        {event.min_age}+
                       </span>
                       <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-600">
-                        {summary.language}
+                        {event.language}
                       </span>
                       <span className="rounded-md border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-600">
-                        {summary.genere}
+                        {event.genere}
                       </span>
                     </div>
 
                     <h2 className="mt-2 text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">
-                      {summary.event_name}
+                      {event.event_name}
                     </h2>
 
                     <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500 sm:text-sm">
-                      {summary.event_description}
+                      {event.event_description}
                     </p>
                   </div>
 
                   <div className="mt-4 flex flex-wrap items-center gap-4 border-t border-slate-100 pt-3 text-xs text-slate-600">
                     <div className="flex items-center gap-1.5">
                       <FiClock className="h-3.5 w-3.5 text-sky-500" />
-                      <span>{summary.event_duration}</span>
+                      <span>{event.event_duration}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <FiFilm className="h-3.5 w-3.5 text-sky-500" />
-                      <span>Released: {summary.released_at}</span>
+                      <span>Released: {event.released_at}</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Showtime & Selected Seat Card */}
+            {/* Showtime & Selected Seats Card */}
             <div className="rounded-2xl border border-sky-100 bg-white p-5 shadow-xs sm:p-6">
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 Show & Seat Information
@@ -169,31 +209,49 @@ function SummaryPage() {
                       {formattedDate}
                     </p>
                     <p className="text-xs font-medium text-sky-600">
-                      {/* {formatTime(summary.start_time)} -{" "}
-                      {formatTime(summary.end_time)} */}
-                      {summary.start_time} - {summary.end_time}
+                      {formatTime(showSummary.start_time)} -{" "}
+                      {formatTime(showSummary.end_time)}
                     </p>
                   </div>
                 </div>
 
-                {/* Seat Block */}
+                {/* Seat Summary Block */}
                 <div className="flex items-start gap-3 rounded-xl border border-sky-50 bg-sky-50/40 p-3.5">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-sky-500 shadow-2xs">
                     <HiTicket className="h-5 w-5" />
                   </div>
                   <div>
                     <p className="text-[11px] font-medium text-slate-400 uppercase">
-                      Reserved Seat
+                      Reserved Seats ({selectedSeats.length})
                     </p>
                     <p className="text-sm font-semibold text-slate-800">
-                      Seat {summary.row_label}
-                      {summary.seat_number}
+                      {selectedSeats
+                        .map((s) => `${s.row_label}${s.seat_number}`)
+                        .join(", ")}
                     </p>
                     <p className="text-xs font-medium text-slate-500">
-                      {summary.seat_type} Tier
+                      {selectedSeats[0]?.seat_type ?? "Standard"} Tier
                     </p>
                   </div>
                 </div>
+              </div>
+
+              {/* Itemized Seats Pills */}
+              <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-slate-100 pt-3">
+                {selectedSeats.map((seat) => (
+                  <span
+                    key={seat.show_seat_id}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-sky-200/80 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700"
+                  >
+                    <span>
+                      Seat {seat.row_label}
+                      {seat.seat_number}
+                    </span>
+                    <span className="text-[10px] font-normal text-sky-500">
+                      (₹{seat.price})
+                    </span>
+                  </span>
+                ))}
               </div>
 
               {/* Cancellation Notice Banner */}
@@ -216,11 +274,11 @@ function SummaryPage() {
               <div className="mt-4 space-y-3 border-b border-slate-100 pb-4 text-sm">
                 <div className="flex items-center justify-between text-slate-600">
                   <span>
-                    1x Ticket ({summary.seat_type} - {summary.row_label}
-                    {summary.seat_number})
+                    Tickets Subtotal ({selectedSeats.length}{" "}
+                    {selectedSeats.length > 1 ? "seats" : "seat"})
                   </span>
                   <span className="font-semibold text-slate-800">
-                    ₹{summary.price}
+                    ₹{basePrice.toFixed(2)}
                   </span>
                 </div>
 
@@ -230,17 +288,13 @@ function SummaryPage() {
                     <FiInfo className="h-3.5 w-3.5 text-slate-400" />
                   </span>
                   <span className="font-semibold text-slate-800">
-                    {/* ₹{convenienceFee.toFixed(2)} */}
-                    ₹9.52
+                    ₹{convenienceFee.toFixed(2)}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>Integrated GST (18%)</span>
-                  <span>
-                    {/* ₹{gst.toFixed(2)} */}
-                    ₹100.00
-                  </span>
+                  <span>₹{gst.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -250,24 +304,24 @@ function SummaryPage() {
                   Amount Payable
                 </span>
                 <span className="text-2xl font-extrabold tracking-tight text-slate-900">
-                  ₹{summary.price}
+                  ₹{totalAmount.toFixed(2)}
                 </span>
               </div>
 
               {/* Pay Button */}
               <button
                 type="button"
-                disabled={isLoading}
+                disabled={isProcessing}
                 onClick={handlePay}
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-sky-400 py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 active:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isLoading ? (
+                {isProcessing ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     <span>Processing Payment...</span>
                   </>
                 ) : (
-                  <span>Pay ₹{summary.price}</span>
+                  <span>Pay ₹{totalAmount.toFixed(2)}</span>
                 )}
               </button>
 
@@ -284,7 +338,7 @@ function SummaryPage() {
                 <span>Important Note</span>
               </div>
               Please bring a valid photo ID matching the age rating (
-              {summary.min_age}+). Tickets once booked cannot be rescheduled.
+              {event.min_age}+). Tickets once booked cannot be rescheduled.
             </div>
           </div>
         </div>
