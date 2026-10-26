@@ -31,37 +31,64 @@ async function getAvailableShows(req, res) {
   try {
     const [shows] = await pool.query(
       `SELECT
-            e.event_id,
-            e.event_name,
-            e.event_image,
-            e.event_duration,
-            v.venue_id,
-            v.venue_name,
-            v.venue_address,
-            v.venue_map_link,
-            sc.screen_id,
-            sc.screen_name,
-            s.show_id,
-            s.show_date,
-            s.start_time,
-            s.end_time
-        FROM shows s
-        JOIN events e
-            ON s.event_id_ref = e.event_id
+        e.event_id,
+        e.event_name,
+        e.event_description,
+        e.event_type,
+        e.event_image,
+        e.event_duration,
+        e.released_at,
+        e.min_age,
+        e.genere,
+        e.language,
+
+        sh.show_id,
+        sh.start_time,
+        sh.end_time,
+        sh.show_date,
+
+        sc.screen_id,
+        sc.screen_name,
+
+        v.venue_id,
+        v.venue_name,
+        v.venue_address
+
+        FROM events e
+        JOIN shows sh
+            ON sh.event_id_ref = e.event_id
         JOIN screens sc
-            ON s.screen_id_ref = sc.screen_id
+            ON sh.screen_id_ref = sc.screen_id
         JOIN venue v
             ON sc.venue_id_ref = v.venue_id
-        WHERE s.event_id_ref = ?
-        AND TIMESTAMP(s.show_date, s.start_time) > NOW()
-        ORDER BY s.show_date, v.venue_name, s.start_time;`,
+
+        WHERE e.event_id = ?;`,
       [eventId],
     );
+
+    const eventInfo = {
+      event_name: shows[0].event_name,
+      event_description: shows[0].event_description,
+      event_image: shows[0].event_image,
+      event_duration: shows[0].event_duration,
+      event_language: shows[0].language,
+      min_age: shows[0].min_age,
+      genere: shows[0].genere,
+    };
+
+    const show = shows.map((show) => ({
+      show_id: show.show_id,
+      start_time: show.start_time,
+      show_date: show.show_date,
+      venue: show.venue_name,
+      venue_address: show.venue_address,
+    }));
 
     return res.status(200).json({
       success: true,
       count: shows.length,
-      shows,
+      event: eventInfo,
+      shows: show,
     });
   } catch (error) {
     console.error("Error fetching event shows:", error);
