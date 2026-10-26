@@ -26,7 +26,7 @@ const routes = createBrowserRouter([
     ],
   },
   {
-    path: "/movies/show/:id",
+    path: "/movies/show/:showId",
     element: <SeatPage />,
   },
   {

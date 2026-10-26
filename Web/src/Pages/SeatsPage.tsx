@@ -4,21 +4,22 @@ import type { ApiShowSeat, SeatTierSection } from "../API/API_Response";
 import SeatComponent from "../Components/SeatComponent";
 import { useQuery } from "@tanstack/react-query";
 import { getShowSeats } from "../API/ShowApi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import LoadingScreen from "../Components/Loading";
 
 function SeatPage() {
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
 
-  const { id } = useParams();
+  const { showId } = useParams();
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["showSeats", id],
-    queryFn: () => getShowSeats(id!),
+    queryKey: ["showSeats", showId],
+    queryFn: () => getShowSeats(showId!),
     refetchInterval: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
+  const navigate = useNavigate();
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -86,6 +87,17 @@ function SeatPage() {
       0,
     );
   }, [selectedSeats]);
+
+  const handleNavigation = () => {
+    if (selectedSeatIds.length === 0) return;
+
+    const params = new URLSearchParams({
+      showId: showId!,
+      seats: selectedSeatIds.join(","),
+    });
+
+    navigate(`/booking/summary?${params.toString()}`);
+  };
 
   if (error) {
     return <div>Error...</div>;
@@ -242,7 +254,7 @@ function SeatPage() {
 
             <button
               type="button"
-              onClick={() => console.log("Checkout seats:", selectedSeats)}
+              onClick={handleNavigation}
               className="inline-flex items-center gap-2 rounded-lg bg-sky-400 px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 active:bg-sky-600"
             >
               <span>Proceed to Pay</span>
