@@ -18,6 +18,8 @@ async function stripePaymentGateway(amount, ticketName) {
       },
     ],
 
+    expires_at: Math.floor(Date.now() / 1000) + 30 * 60, // 30 minutes
+
     success_url: `${process.env.CLIENT_URL}/payment/success`,
     cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
   });

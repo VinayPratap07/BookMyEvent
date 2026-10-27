@@ -55,41 +55,70 @@ async function getAvailableShows(req, res) {
         v.venue_name,
         v.venue_address
 
-        FROM events e
-        JOIN shows sh
-            ON sh.event_id_ref = e.event_id
-        JOIN screens sc
-            ON sh.screen_id_ref = sc.screen_id
-        JOIN venue v
-            ON sc.venue_id_ref = v.venue_id
+      FROM events e
+      JOIN shows sh
+        ON sh.event_id_ref = e.event_id
+      JOIN screens sc
+        ON sh.screen_id_ref = sc.screen_id
+      JOIN venue v
+        ON sc.venue_id_ref = v.venue_id
 
-        WHERE e.event_id = ?;`,
+      WHERE e.event_id = ?
+      ORDER BY v.venue_name, sh.show_date, sh.start_time;`,
       [eventId],
     );
 
+    if (shows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No shows found for this event",
+      });
+    }
+
+    const firstShow = shows[0];
+
     const eventInfo = {
-      event_name: shows[0].event_name,
-      event_description: shows[0].event_description,
-      event_image: shows[0].event_image,
-      event_duration: shows[0].event_duration,
-      event_language: shows[0].language,
-      min_age: shows[0].min_age,
-      genere: shows[0].genere,
+      event_id: firstShow.event_id,
+      event_name: firstShow.event_name,
+      event_description: firstShow.event_description,
+      event_type: firstShow.event_type,
+      event_image: firstShow.event_image,
+      event_duration: firstShow.event_duration,
+      released_at: firstShow.released_at,
+      event_language: firstShow.language,
+      min_age: firstShow.min_age,
+      genere: firstShow.genere,
     };
 
-    const show = shows.map((show) => ({
-      show_id: show.show_id,
-      start_time: show.start_time,
-      show_date: show.show_date,
-      venue: show.venue_name,
-      venue_address: show.venue_address,
-    }));
+    const venuesMap = new Map();
+
+    for (const show of shows) {
+      if (!venuesMap.has(show.venue_id)) {
+        venuesMap.set(show.venue_id, {
+          venue_id: show.venue_id,
+          venue_name: show.venue_name,
+          venue_address: show.venue_address,
+          shows: [],
+        });
+      }
+
+      venuesMap.get(show.venue_id).shows.push({
+        show_id: show.show_id,
+        show_date: show.show_date,
+        start_time: show.start_time,
+        end_time: show.end_time,
+        screen_id: show.screen_id,
+        screen_name: show.screen_name,
+      });
+    }
+
+    const venues = Array.from(venuesMap.values());
 
     return res.status(200).json({
       success: true,
       count: shows.length,
       event: eventInfo,
-      shows: show,
+      venues,
     });
   } catch (error) {
     console.error("Error fetching event shows:", error);

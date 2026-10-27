@@ -96,8 +96,8 @@ function SummaryPage() {
   const basePrice =
     Number(subtotal) ||
     selectedSeats.reduce((acc, s) => acc + Number(s.price), 0);
-  const convenienceFee = Math.round(basePrice * 0.08); // 8% fee
-  const gst = Math.round(convenienceFee * 0.18); // 18% GST on convenience fee
+  const convenienceFee = Math.round(basePrice * 0.02); // 8% fee
+  const gst = Math.round(basePrice * 0.18); // 18% GST on convenience fee
   const totalAmount = basePrice + convenienceFee + gst;
 
   const handlePay = () => {
