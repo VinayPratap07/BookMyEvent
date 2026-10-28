@@ -15,7 +15,7 @@ const {
 const userRoutes = require("./Routes/User.Auth.Routes");
 const organiserRoutes = require("./Routes/Organiser.Routes");
 const showRoutes = require("./Routes/Show.Routes");
-const paymentRoutes = require("./Routes/Payment.Routes");
+const testRoutes = require("./Routes/Payment.Routes");
 const bookingRoutes = require("./Routes/Booking.Routes");
 
 const app = express();
@@ -46,7 +46,7 @@ app.use(
   organiserRoutes,
 );
 app.use("/api/show", showRoutes);
-app.use("/api/payment", paymentRoutes);
+app.use("/api/test", testRoutes);
 app.use("/api/book", bookingRoutes);
 
 app.listen(PORT, () => {

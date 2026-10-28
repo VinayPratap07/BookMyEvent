@@ -1,21 +1,4 @@
-const { stripePaymentGateway } = require("../Service/Payment.Service");
-const { checkSeatAvailability, lockSeats } = require("../Service/Seat.Service");
-
-async function createPayment(req, res) {
-  // const { showId, seatIds } = req.body;
-  // const userId = req.user.user_id;
-
-  // if (
-  //   !showId ||
-  //   !Array.isArray(seatIds) ||
-  //   seatIds.length === 0 ||
-  //   !seatIds.every((id) => typeof id === "string") ||
-  //   new Set(seatIds).size !== seatIds.length
-  // ) {
-  //   return res.status(422).json({
-  //     message: "Invalid show or seat selection",
-  //   });
-  // }
+async function TestFunction(req, res) {
   try {
     // const paymentInfo = await stripePaymentGateway(amount, show + seatNo);
 
@@ -27,4 +10,4 @@ async function createPayment(req, res) {
   }
 }
 
-module.exports = { createPayment };
+module.exports = { TestFunction };
