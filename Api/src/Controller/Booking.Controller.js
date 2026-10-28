@@ -17,35 +17,35 @@ async function BookingSummary(req, res) {
 
     const [summary] = await pool.query(
       `SELECT
-    sh.show_id,
-    sh.show_date,
-    sh.start_time,
-    sh.end_time,
-    e.event_id,
-    e.event_name,
-    e.event_description,
-    e.event_type,
-    e.event_image,
-    e.event_duration,
-    e.released_at,
-    e.min_age,
-    e.genere,
-    e.language,
-    ss.show_seat_id,
-    ss.status AS seat_status,
-    ss.price,
-    s.row_label,
-    s.seat_number,
-    s.seat_type
-  FROM shows sh
-  JOIN events e
-    ON sh.event_id_ref = e.event_id
-  JOIN show_seats ss
-    ON sh.show_id = ss.show_id_ref
-  JOIN seats s
-    ON ss.seat_id_ref = s.seat_id
-  WHERE sh.show_id = ?
-    AND ss.show_seat_id IN (${placeholders})`,
+        sh.show_id,
+        sh.show_date,
+        sh.start_time,
+        sh.end_time,
+        e.event_id,
+        e.event_name,
+        e.event_description,
+        e.event_type,
+        e.event_image,
+        e.event_duration,
+        e.released_at,
+        e.min_age,
+        e.genere,
+        e.language,
+        ss.show_seat_id,
+        ss.status AS seat_status,
+        ss.price,
+        s.row_label,
+        s.seat_number,
+        s.seat_type
+      FROM shows sh
+      JOIN events e
+        ON sh.event_id_ref = e.event_id
+      JOIN show_seats ss
+        ON sh.show_id = ss.show_id_ref
+      JOIN seats s
+        ON ss.seat_id_ref = s.seat_id
+      WHERE sh.show_id = ?
+        AND ss.show_seat_id IN (${placeholders})`,
       [show, ...seatIds],
     );
 

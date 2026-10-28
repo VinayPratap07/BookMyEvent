@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllShows } from "../API/ShowApi";
 import LoadingScreen from "../Components/Loading";
 import ErrorState from "../Components/Error";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import type { ApiShow, ShowsApiResponse } from "../API/API_Response";
 import DateFilter from "../Components/Date&Filter";
 
@@ -57,7 +57,7 @@ function EventShowPage() {
   return (
     <div className="min-h-screen bg-slate-50/50 pb-16">
       {/* 1. Event Meta Header */}
-      <section className="border-b border-sky-100 bg-white">
+      <section className="border-b border-purple-100 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             {event.event_name} -{" "}
@@ -67,7 +67,7 @@ function EventShowPage() {
           </h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700">
+            <span className="rounded-full border border-purple-200 bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700">
               {event.event_duration}
             </span>
             <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
@@ -115,20 +115,20 @@ function EventShowPage() {
             return (
               <div
                 key={venue.venue_id}
-                className="flex flex-col rounded-xl border border-sky-100 bg-white p-5 shadow-xs transition hover:border-sky-200 lg:flex-row lg:items-center lg:gap-8"
+                className="flex flex-col rounded-xl border border-purple-100 bg-white p-5 shadow-xs transition hover:border-purple-200 lg:flex-row lg:items-center lg:gap-8"
               >
                 {/* Venue Details */}
                 <div className="min-w-[280px] max-w-xs shrink-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-1.5">
-                      <h3 className="cursor-pointer text-sm font-semibold text-slate-800 transition hover:text-sky-600">
+                      <h3 className="cursor-pointer text-sm font-semibold text-slate-800 transition hover:text-purple-600">
                         {venue.venue_name}
                       </h3>
                       <button
                         type="button"
                         aria-label="Venue Information"
                         title={venue.venue_address}
-                        className="text-slate-400 hover:text-sky-500"
+                        className="text-slate-400 hover:text-purple-500"
                       >
                         <FiInfo className="h-3.5 w-3.5" />
                       </button>
@@ -155,9 +155,9 @@ function EventShowPage() {
                         : "Non-cancellable"}
                     </p>
 
-                    <div className="flex items-center gap-2.5 text-xs text-sky-600">
+                    <div className="flex items-center gap-2.5 text-xs text-purple-600">
                       {venue.hasMobileTicket && (
-                        <span className="inline-flex items-center gap-1 rounded bg-sky-50 px-1.5 py-0.5 text-[10px] font-medium text-sky-600">
+                        <span className="inline-flex items-center gap-1 rounded bg-purple-50 px-1.5 py-0.5 text-[10px] font-medium text-purple-600">
                           <FiSmartphone className="h-3 w-3" />
                           <span>M-Ticket</span>
                         </span>
@@ -176,8 +176,8 @@ function EventShowPage() {
                 <div className="mt-4 flex flex-1 flex-wrap items-center gap-3 lg:mt-0">
                   {venue.shows.map((show) => (
                     <div key={show.show_id} className="group relative">
-                      <button
-                        type="button"
+                      <Link
+                        to={`/movies/show/${show.show_id}`}
                         className={`flex min-w-[105px] flex-col items-center justify-center rounded-lg border px-3 py-2 text-center transition ${getStatusBorder(
                           show.status,
                         )}`}
@@ -188,11 +188,11 @@ function EventShowPage() {
                         <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wider text-slate-500">
                           {show.screen_name}
                         </span>
-                      </button>
+                      </Link>
 
                       {/* Price Breakdown Hover Tooltip (Shown if priceTiers exists) */}
                       {show.priceTiers && show.priceTiers.length > 0 && (
-                        <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-sky-100 bg-white p-2.5 text-left text-xs opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100">
+                        <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-purple-100 bg-white p-2.5 text-left text-xs opacity-0 shadow-lg transition-opacity duration-150 group-hover:pointer-events-auto group-hover:opacity-100">
                           <p className="mb-1.5 border-b border-slate-100 pb-1 text-[11px] font-semibold text-slate-700">
                             Ticket Prices
                           </p>
@@ -211,7 +211,7 @@ function EventShowPage() {
                               </div>
                             ))}
                           </div>
-                          <div className="absolute top-full left-1/2 -mt-1 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-sky-100 bg-white" />
+                          <div className="absolute top-full left-1/2 -mt-1 h-2 w-2 -translate-x-1/2 rotate-45 border-b border-r border-purple-100 bg-white" />
                         </div>
                       )}
                     </div>

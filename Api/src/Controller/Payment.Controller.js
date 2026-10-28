@@ -1,15 +1,29 @@
 const { stripePaymentGateway } = require("../Service/Payment.Service");
+const { checkSeatAvailability } = require("../Service/Seat.Service");
 
 async function createPayment(req, res) {
-  const { seatId, show } = req.body;
+  // const { showId, seatIds } = req.body;
+  // const userId = req.user.user_id;
 
-  if (!seatId || !show) {
-    return res.status(422).json({ message: "couldnt process the payment" });
-  }
+  // if (
+  //   !showId ||
+  //   !Array.isArray(seatIds) ||
+  //   seatIds.length === 0 ||
+  //   !seatIds.every((id) => typeof id === "string") ||
+  //   new Set(seatIds).size !== seatIds.length
+  // ) {
+  //   return res.status(422).json({
+  //     message: "Invalid show or seat selection",
+  //   });
+  // }
   try {
-    const paymentInfo = await stripePaymentGateway(amount, show + seatNo);
+    // const paymentInfo = await stripePaymentGateway(amount, show + seatNo);
 
-    return res.status(201).json({ url: paymentInfo.url });
+    const isAvailable = await checkSeatAvailability(
+      "8231332c-d076-11f1-aebc-ce0356210d3d",
+    );
+
+    return res.status(201).json({ url: isAvailable });
   } catch (error) {
     return res.status(500).json({ msg: error.message });
   }

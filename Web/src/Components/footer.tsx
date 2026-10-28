@@ -77,9 +77,9 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="w-full border-t border-sky-100 bg-white text-slate-600">
+    <footer className="w-full border-t border-purple-100 bg-white text-slate-600">
       {/* Top Banner: Newsletter Subscription */}
-      <div className="border-b border-sky-100/80 bg-gradient-to-r from-sky-50/70 via-sky-50/30 to-white py-10">
+      <div className="border-b border-purple-100/80 bg-gradient-to-r from-purple-50/70 via-purple-50/30 to-white py-10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-4 sm:px-6 md:flex-row lg:px-8">
           <div className="max-w-md text-center md:text-left">
             <h3 className="text-xl font-bold tracking-tight text-slate-800">
@@ -93,8 +93,8 @@ export const Footer: React.FC = () => {
 
           <form onSubmit={handleSubscribe} className="w-full max-w-md">
             {isSubscribed ? (
-              <div className="flex items-center gap-2 rounded-lg border border-sky-200 bg-sky-50 px-4 py-2.5 text-sm font-medium text-sky-700">
-                <FiCheckCircle className="h-4 w-4 shrink-0 text-sky-500" />
+              <div className="flex items-center gap-2 rounded-lg border border-purple-200 bg-purple-50 px-4 py-2.5 text-sm font-medium text-purple-700">
+                <FiCheckCircle className="h-4 w-4 shrink-0 text-purple-500" />
                 <span>You're subscribed! We'll keep you in the loop.</span>
               </div>
             ) : (
@@ -108,11 +108,11 @@ export const Footer: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email address"
-                  className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pr-28 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
+                  className="w-full rounded-lg border border-slate-200 bg-white py-2.5 pr-28 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                 />
                 <button
                   type="submit"
-                  className="absolute right-1.5 inline-flex items-center gap-1.5 rounded-md bg-sky-400 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 active:bg-sky-600"
+                  className="absolute right-1.5 inline-flex items-center gap-1.5 rounded-md bg-purple-500 px-3.5 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200 active:bg-purple-600"
                 >
                   <span>Subscribe</span>
                   <FiArrowRight className="h-3.5 w-3.5" />
@@ -129,11 +129,11 @@ export const Footer: React.FC = () => {
           {/* Brand Info & Address */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-100 text-sky-500">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-100 text-purple-500">
                 <HiTicket className="h-5 w-5" />
               </div>
               <span className="text-xl font-bold tracking-tight text-slate-800">
-                BookMy<span className="text-sky-500">Event</span>
+                BookMy<span className="text-purple-500">Event</span>
               </span>
             </div>
 
@@ -145,11 +145,11 @@ export const Footer: React.FC = () => {
 
             <div className="mt-5 space-y-2 text-xs text-slate-500">
               <div className="flex items-center gap-2">
-                <FiMapPin className="h-4 w-4 shrink-0 text-sky-400" />
+                <FiMapPin className="h-4 w-4 shrink-0 text-purple-400" />
                 <span>Sector 62, Noida, Uttar Pradesh, India</span>
               </div>
               <div className="flex items-center gap-2">
-                <FiPhone className="h-4 w-4 shrink-0 text-sky-400" />
+                <FiPhone className="h-4 w-4 shrink-0 text-purple-400" />
                 <span>+91 (011) 4567-8900</span>
               </div>
             </div>
@@ -163,7 +163,7 @@ export const Footer: React.FC = () => {
                     key={social.label}
                     href={social.href}
                     aria-label={social.label}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-500"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition hover:border-purple-300 hover:bg-purple-50 hover:text-purple-500"
                   >
                     <Icon className="h-3.5 w-3.5" />
                   </a>
@@ -183,7 +183,7 @@ export const Footer: React.FC = () => {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-slate-500 transition hover:text-sky-500"
+                      className="text-slate-500 transition hover:text-purple-500"
                     >
                       {link.label}
                     </a>
@@ -196,19 +196,19 @@ export const Footer: React.FC = () => {
       </div>
 
       {/* Bottom Sub-footer */}
-      <div className="border-t border-sky-100/70 bg-sky-50/30 py-5">
+      <div className="border-t border-purple-100/70 bg-purple-50/30 py-5">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-xs text-slate-400 sm:flex-row sm:px-6 lg:px-8">
           <p>
             © {new Date().getFullYear()} BookMyEvent Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <a href="#" className="hover:text-sky-500">
+            <a href="#" className="hover:text-purple-500">
               Security
             </a>
-            <a href="#" className="hover:text-sky-500">
+            <a href="#" className="hover:text-purple-500">
               Cookie Settings
             </a>
-            <a href="#" className="hover:text-sky-500">
+            <a href="#" className="hover:text-purple-500">
               Accessibility
             </a>
           </div>

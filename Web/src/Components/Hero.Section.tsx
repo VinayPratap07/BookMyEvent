@@ -86,11 +86,11 @@ function HeroSection() {
   }, [isPaused, autoPlayInterval, nextSlide, slides.length]);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-sky-50/60 via-white to-white py-6 md:py-8">
+    <section className="relative overflow-hidden bg-gradient-to-b from-purple-50/60 via-white to-white py-6 md:py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Banner Carousel Card */}
         <div
-          className="group relative h-[420px] w-full overflow-hidden rounded-2xl border border-sky-100 shadow-md sm:h-[480px] lg:h-[520px]"
+          className="group relative h-[420px] w-full overflow-hidden rounded-2xl border border-purple-100 shadow-md sm:h-[480px] lg:h-[520px]"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -120,8 +120,8 @@ function HeroSection() {
                 {/* Content Overlay */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-10 md:justify-center md:max-w-2xl lg:p-14">
                   {/* Category Pill */}
-                  <div className="mb-3 inline-flex items-center gap-1.5 self-start rounded-full border border-sky-300/40 bg-sky-500/20 px-3 py-1 text-xs font-semibold tracking-wide text-sky-200 backdrop-blur-md">
-                    <HiSparkles className="h-3.5 w-3.5 text-sky-300" />
+                  <div className="mb-3 inline-flex items-center gap-1.5 self-start rounded-full border border-purple-300/40 bg-purple-500/20 px-3 py-1 text-xs font-semibold tracking-wide text-purple-200 backdrop-blur-md">
+                    <HiSparkles className="h-3.5 w-3.5 text-purple-300" />
                     <span>{slide.tag}</span>
                   </div>
 
@@ -138,11 +138,11 @@ function HeroSection() {
                   {/* Meta details: Date & Venue */}
                   <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-medium text-slate-300 sm:text-sm">
                     <div className="flex items-center gap-1.5">
-                      <FiCalendar className="h-4 w-4 text-sky-400" />
+                      <FiCalendar className="h-4 w-4 text-purple-400" />
                       <span>{slide.date}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <FiMapPin className="h-4 w-4 text-sky-400" />
+                      <FiMapPin className="h-4 w-4 text-purple-400" />
                       <span>{slide.venue}</span>
                     </div>
                   </div>
@@ -152,7 +152,7 @@ function HeroSection() {
                     <button
                       type="button"
                       onClick={() => onSlideCtaClick?.(slide)}
-                      className="inline-flex items-center gap-2 rounded-lg bg-sky-400 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-300 active:bg-sky-600"
+                      className="inline-flex items-center gap-2 rounded-lg bg-purple-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-300 active:bg-purple-600"
                     >
                       <span>{slide.ctaText}</span>
                       <FiArrowRight className="h-4 w-4" />
@@ -168,7 +168,7 @@ function HeroSection() {
             type="button"
             onClick={prevSlide}
             aria-label="Previous Slide"
-            className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-white/30 p-2.5 text-white backdrop-blur-md transition hover:bg-white hover:text-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-300 md:left-5"
+            className="absolute left-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-white/30 p-2.5 text-white backdrop-blur-md transition hover:bg-white hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-300 md:left-5"
           >
             <FiChevronLeft className="h-5 w-5" />
           </button>
@@ -176,7 +176,7 @@ function HeroSection() {
             type="button"
             onClick={nextSlide}
             aria-label="Next Slide"
-            className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-white/30 p-2.5 text-white backdrop-blur-md transition hover:bg-white hover:text-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-300 md:right-5"
+            className="absolute right-3 top-1/2 z-20 -translate-y-1/2 rounded-full border border-white/20 bg-white/30 p-2.5 text-white backdrop-blur-md transition hover:bg-white hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-300 md:right-5"
           >
             <FiChevronRight className="h-5 w-5" />
           </button>
@@ -193,7 +193,7 @@ function HeroSection() {
                   aria-label={`Go to slide ${index + 1}`}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     isActive
-                      ? "w-7 bg-sky-400 shadow-sm"
+                      ? "w-7 bg-purple-400 shadow-sm"
                       : "w-2 bg-white/60 hover:bg-white"
                   }`}
                 />

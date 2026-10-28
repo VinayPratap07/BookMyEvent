@@ -68,17 +68,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-sky-100 bg-white shadow-xs">
+    <header className="sticky top-0 z-50 w-full border-b border-purple-100 bg-white shadow-xs">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Brand / Logo */}
         <Link to="/">
           <div className="flex shrink-0 items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sky-100 text-sky-500">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-500 text-white">
               <HiTicket className="h-5 w-5" />
             </div>
 
             <span className="text-xl font-bold tracking-tight text-slate-800">
-              BookMy<span className="text-sky-500">Event</span>
+              BookMy<span className="text-purple-500">Event</span>
             </span>
           </div>
         </Link>
@@ -96,7 +96,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search for movies, events, plays, sports and activities"
-            className="w-full rounded-lg border border-slate-200 bg-sky-50/40 py-2 pr-8 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none transition duration-150 focus:border-sky-400 focus:bg-white focus:ring-2 focus:ring-sky-100"
+            className="w-full rounded-lg border border-slate-200 bg-purple-50/40 py-2 pr-8 pl-10 text-sm text-slate-800 placeholder-slate-400 outline-none transition duration-150 focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
           />
           {searchQuery && (
             <button
@@ -118,20 +118,20 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={() => setIsCityDropdownOpen((prev) => !prev)}
               aria-expanded={isCityDropdownOpen}
-              className="flex items-center gap-1.5 rounded-lg border border-transparent px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-sky-50 hover:text-sky-600 focus:border-sky-300 focus:outline-none"
+              className="flex items-center gap-1.5 rounded-lg border border-transparent px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-purple-50 hover:text-purple-500 focus:border-purple-300 focus:outline-none"
             >
-              <FiMapPin className="h-4 w-4 text-sky-500" />
+              <FiMapPin className="h-4 w-4 text-purple-500" />
               <span>{selectedCity}</span>
               <FiChevronDown
                 className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${
-                  isCityDropdownOpen ? "rotate-180 text-sky-500" : ""
+                  isCityDropdownOpen ? "rotate-180 text-purple-400" : ""
                 }`}
               />
             </button>
 
             {/* Dropdown Menu */}
             {isCityDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 rounded-lg border border-sky-100 bg-white py-1.5 shadow-lg">
+              <div className="absolute right-0 mt-2 w-48 rounded-lg border border-purple-100 bg-white py-1.5 shadow-lg">
                 <div className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-slate-400">
                   Select Location
                 </div>
@@ -142,13 +142,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={() => handleCitySelect(city)}
                     className={`flex w-full items-center justify-between px-3 py-2 text-left text-sm transition ${
                       selectedCity === city
-                        ? "bg-sky-50 font-semibold text-sky-600"
-                        : "text-slate-700 hover:bg-slate-50 hover:text-sky-500"
+                        ? "bg-purple-50 font-semibold text-purple-600"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-purple-500"
                     }`}
                   >
                     <span>{city}</span>
                     {selectedCity === city && (
-                      <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
+                      <span className="h-1.5 w-1.5 rounded-full bg-purple-500" />
                     )}
                   </button>
                 ))}
@@ -159,7 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Sign In Button */}
           <Link
             to="/signup"
-            className="rounded-lg bg-sky-400 px-4 py-2 text-sm font-medium text-white shadow-xs transition duration-150 hover:bg-sky-500 focus:ring-2 focus:ring-sky-200 focus:outline-none active:bg-sky-600"
+            className="rounded-lg bg-purple-500 px-4 py-2 text-sm font-medium text-white shadow-xs transition duration-150 hover:bg-purple-600 focus:ring-2 focus:ring-purple-200 focus:outline-none active:bg-purple-600"
           >
             Sign In
           </Link>
