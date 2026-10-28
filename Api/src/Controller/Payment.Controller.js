@@ -1,5 +1,5 @@
 const { stripePaymentGateway } = require("../Service/Payment.Service");
-const { checkSeatAvailability } = require("../Service/Seat.Service");
+const { checkSeatAvailability, lockSeats } = require("../Service/Seat.Service");
 
 async function createPayment(req, res) {
   // const { showId, seatIds } = req.body;
@@ -19,11 +19,9 @@ async function createPayment(req, res) {
   try {
     // const paymentInfo = await stripePaymentGateway(amount, show + seatNo);
 
-    const isAvailable = await checkSeatAvailability(
-      "8231332c-d076-11f1-aebc-ce0356210d3d",
-    );
+    const isLocked = await lockSeats("8232bc84-d076-11f1-aebc-ce0356210d3d");
 
-    return res.status(201).json({ url: isAvailable });
+    return res.status(201).json({ url: isLocked });
   } catch (error) {
     return res.status(500).json({ msg: error.message });
   }

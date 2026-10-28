@@ -6,12 +6,27 @@ async function checkSeatAvailability(seatId) {
         WHERE show_seat_id = ? `,
     [seatId],
   );
-
-  if (isAvailable[0].status) {
+  if (isAvailable[0].status === "OPEN") {
     return true;
   } else {
     return false;
   }
 }
 
-module.exports = { checkSeatAvailability };
+async function lockSeats(seatId) {
+  const isLocked = await pool.query(
+    `
+    UPDATE show_seats 
+    SET status = "LOCKED" 
+    WHERE show_seat_id = ?`,
+    [seatId],
+  );
+
+  if (isLocked[0].changedRows === 1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+module.exports = { checkSeatAvailability, lockSeats };
