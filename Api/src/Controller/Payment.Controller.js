@@ -1,4 +1,4 @@
-const { initiateBooking } = require("../Service/Booking.Service");
+const { initiatePreBooking } = require("../Service/Booking.Service");
 
 async function TestFunction(req, res) {
   seatIds = [
@@ -9,7 +9,7 @@ async function TestFunction(req, res) {
   try {
     // const paymentInfo = await stripePaymentGateway(amount, show + seatNo);
 
-    const ans = await initiateBooking(seatIds);
+    const ans = await initiatePreBooking(seatIds);
 
     return res.status(201).json({ url: ans });
   } catch (error) {

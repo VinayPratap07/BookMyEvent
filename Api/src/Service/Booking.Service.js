@@ -1,7 +1,7 @@
 const { calculatePrice } = require("./Pricing.Service");
 const { checkSeatAvailability, lockSeats } = require("./Seat.Service");
 
-async function initiateBooking(seatIds) {
+async function initiatePreBooking(seatIds) {
   const isAvailable = await checkSeatAvailability(seatIds);
 
   if (!isAvailable) {
@@ -18,4 +18,4 @@ async function initiateBooking(seatIds) {
   return totalAmt;
 }
 
-module.exports = { initiateBooking };
+module.exports = { initiatePreBooking };

@@ -47,7 +47,7 @@ app.use(
 );
 app.use("/api/show", showRoutes);
 app.use("/api/test", testRoutes);
-app.use("/api/book", bookingRoutes);
+app.use("/api/book", forceAuthentication, bookingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server started at PORT: ${PORT}`);
