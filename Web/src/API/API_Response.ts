@@ -108,9 +108,6 @@ export interface ApiVenue {
   venue_id: string;
   venue_name: string;
   venue_address: string;
-  cancellationAvailable?: boolean;
-  hasFoodBeverage?: boolean;
-  hasMobileTicket?: boolean;
   shows: ApiShow[];
 }
 
