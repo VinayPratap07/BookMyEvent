@@ -9,7 +9,7 @@ async function checkSeatAvailability(seatIds) {
 
   return (
     rows.length === seatIds.length &&
-    rows.every((seat) => seat.status === "AVAILABLE")
+    rows.every((seat) => seat.status === "OPEN")
   );
 }
 

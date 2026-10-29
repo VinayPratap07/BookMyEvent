@@ -1,15 +1,15 @@
-const { calculatePrice } = require("../Service/Pricing.Service");
+const { initiateBooking } = require("../Service/Booking.Service");
 
 async function TestFunction(req, res) {
   seatIds = [
-    "8232bc84-d076-11f1-aebc-ce0356210d3d",
     "8231332c-d076-11f1-aebc-ce0356210d3d",
     "823137ae-d076-11f1-aebc-ce0356210d3d",
+    "82313965-d076-11f1-aebc-ce0356210d3d",
   ];
   try {
     // const paymentInfo = await stripePaymentGateway(amount, show + seatNo);
 
-    const ans = await calculatePrice(seatIds);
+    const ans = await initiateBooking(seatIds);
 
     return res.status(201).json({ url: ans });
   } catch (error) {
