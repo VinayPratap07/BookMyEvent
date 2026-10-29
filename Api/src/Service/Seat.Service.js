@@ -1,32 +1,28 @@
 const { pool } = require("../Database/Connection");
 
-async function checkSeatAvailability(seatId) {
-  const [isAvailable] = await pool.query(
+async function checkSeatAvailability(seatIds) {
+  const [rows] = await pool.query(
     `SELECT status FROM show_seats
-        WHERE show_seat_id = ? `,
-    [seatId],
+        WHERE show_seat_id IN (?) `,
+    [seatIds],
   );
-  if (isAvailable[0].status === "OPEN") {
-    return true;
-  } else {
-    return false;
-  }
+
+  return (
+    rows.length === seatIds.length &&
+    rows.every((seat) => seat.status === "AVAILABLE")
+  );
 }
 
-async function lockSeats(seatId) {
-  const isLocked = await pool.query(
+async function lockSeats(seatIds) {
+  const [result] = await pool.query(
     `
     UPDATE show_seats 
     SET status = "LOCKED" 
-    WHERE show_seat_id = ?`,
-    [seatId],
+    WHERE show_seat_id IN (?)`,
+    [seatIds],
   );
 
-  if (isLocked[0].changedRows === 1) {
-    return true;
-  } else {
-    return false;
-  }
+  return result.affectedRows === seatIds.length;
 }
 
 module.exports = { checkSeatAvailability, lockSeats };
