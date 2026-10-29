@@ -106,12 +106,12 @@ function SeatPage() {
   return (
     <div className="min-h-screen bg-slate-50/60 pb-28 text-slate-800">
       {/* Top Bar */}
-      <header className="sticky top-0 z-30 border-b border-sky-100 bg-white">
+      <header className="sticky top-0 z-30 border-b border-purple-100 bg-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-sky-50 hover:text-sky-600"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600 transition hover:bg-purple-50 hover:text-sky-600"
             >
               <FiArrowLeft className="h-4 w-4" />
             </button>
@@ -199,7 +199,7 @@ function SeatPage() {
             <div className="relative h-6 w-3/4 max-w-xl">
               <svg
                 viewBox="0 0 500 40"
-                className="h-full w-full text-sky-200 drop-shadow-[0_4px_8px_rgba(56,189,248,0.2)]"
+                className="h-full w-full text-purple-300 drop-shadow-[0_4px_8px_rgba(56,189,248,0.2)]"
                 fill="none"
               >
                 <path
@@ -222,7 +222,7 @@ function SeatPage() {
               <span>Available</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="h-5 w-5 rounded-[4px] border border-sky-400 bg-sky-400 shadow-xs" />
+              <div className="h-5 w-5 rounded-[4px] border border-purple-500 bg-purple-500 shadow-xs" />
               <span>Selected</span>
             </div>
             <div className="flex items-center gap-2">
@@ -235,7 +235,7 @@ function SeatPage() {
 
       {/* Floating Bottom Bar (Appears when >= 1 seat is picked) */}
       {selectedSeats.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-sky-100 bg-white/95 px-4 py-3.5 shadow-lg backdrop-blur-md">
+        <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-purple-100 bg-white/95 px-4 py-3.5 shadow-lg backdrop-blur-md">
           <div className="mx-auto flex max-w-7xl items-center justify-between sm:px-6">
             <div>
               <p className="text-xs font-semibold text-slate-500">
@@ -255,7 +255,7 @@ function SeatPage() {
             <button
               type="button"
               onClick={handleNavigation}
-              className="inline-flex items-center gap-2 rounded-lg bg-sky-400 px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 active:bg-sky-600"
+              className="inline-flex items-center gap-2 rounded-lg bg-purple-500 px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200 active:bg-purple-600"
             >
               <span>Proceed to Pay</span>
               <FiCheck className="h-4 w-4" />

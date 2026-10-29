@@ -2,7 +2,7 @@ import { FiInfo } from "react-icons/fi";
 import type { ApiShow, ApiVenue } from "../API/API_Response";
 import { Link } from "react-router-dom";
 
-function VenuesList({ venue_name, venue_address, shows }: ApiVenue) {
+function VenuesList({ venue }: { venue: ApiVenue }) {
   const getStatusBorder = (status: ApiShow["status"] = "available") => {
     switch (status) {
       case "fast-filling":
@@ -29,12 +29,12 @@ function VenuesList({ venue_name, venue_address, shows }: ApiVenue) {
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-1.5">
             <h3 className="cursor-pointer text-sm font-semibold text-slate-800 transition hover:text-purple-600">
-              {venue_name}
+              {venue.venue_name}
             </h3>
             <button
               type="button"
               aria-label="Venue Information"
-              title={venue_address}
+              title={venue.venue_address}
               className="text-slate-400 hover:text-purple-500"
             >
               <FiInfo className="h-3.5 w-3.5" />
@@ -44,15 +44,15 @@ function VenuesList({ venue_name, venue_address, shows }: ApiVenue) {
 
         <p
           className="mt-1 line-clamp-1 text-xs text-slate-500"
-          title={venue_address}
+          title={venue.venue_address}
         >
-          {venue_address}
+          {venue.venue_address}
         </p>
       </div>
 
       {/* Showtimes Grid */}
       <div className="mt-4 flex flex-1 flex-wrap items-center gap-3 lg:mt-0">
-        {shows.map((show) => (
+        {venue.shows.map((show) => (
           <div key={show.show_id} className="group relative">
             <Link
               to={`/movies/show/${show.show_id}`}

@@ -17,7 +17,7 @@ function DateFilter() {
   const [selectedDate, setSelectedDate] = useState<string>("2026-11-06");
 
   return (
-    <section className="sticky top-16 z-30 border-b border-sky-100 bg-white shadow-xs">
+    <section className="sticky top-16 z-30 border-b border-purple-100 bg-white shadow-xs">
       <div className="mx-auto flex max-w-7xl flex-col divide-y divide-slate-100 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:divide-y-0 lg:px-8">
         <div className="no-scrollbar flex items-center gap-1.5 overflow-x-auto py-2.5">
           {DATES.map((d) => {
@@ -29,12 +29,12 @@ function DateFilter() {
                 onClick={() => setSelectedDate(d.fullDate)}
                 className={`flex min-w-[54px] flex-col items-center rounded-xl p-2 transition-all ${
                   isSelected
-                    ? "bg-sky-400 font-bold text-white shadow-sm"
-                    : "text-slate-600 hover:bg-sky-50 hover:text-sky-600"
+                    ? "bg-purple-500 font-bold text-white shadow-sm"
+                    : "text-slate-600 hover:bg-purple-50 hover:text-purple-600"
                 }`}
               >
                 <span
-                  className={`text-[10px] uppercase ${isSelected ? "text-sky-100" : "text-slate-400"}`}
+                  className={`text-[10px] uppercase ${isSelected ? "text-purple-100" : "text-slate-400"}`}
                 >
                   {d.dayName}
                 </span>
@@ -42,7 +42,7 @@ function DateFilter() {
                   {d.dayNumber}
                 </span>
                 <span
-                  className={`text-[10px] uppercase ${isSelected ? "text-sky-100" : "text-slate-400"}`}
+                  className={`text-[10px] uppercase ${isSelected ? "text-purple-100" : "text-slate-400"}`}
                 >
                   {d.month}
                 </span>
@@ -61,7 +61,7 @@ function DateFilter() {
             <button
               key={filterName}
               type="button"
-              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 transition hover:border-sky-300 hover:bg-sky-50/50 hover:text-sky-600"
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-700 transition hover:border-purple-300 hover:bg-purple-50/50 hover:text-purple-600"
             >
               <span>{filterName}</span>
               <FiChevronDown className="h-3.5 w-3.5 text-slate-400" />
@@ -70,7 +70,7 @@ function DateFilter() {
 
           <button
             type="button"
-            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-sky-300 hover:bg-sky-50"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 hover:border-purple-300 hover:bg-purple-50"
             aria-label="Search venues"
           >
             <FiSearch className="h-4 w-4" />

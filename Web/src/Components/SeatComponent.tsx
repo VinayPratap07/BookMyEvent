@@ -18,8 +18,8 @@ function SeatComponent({ seat, isSelected, onSelect }: SeatItemProps) {
     }
 
     if (isSelected) {
-      // Selected: Active light sky blue background with white text
-      return "border-sky-400 bg-sky-400 text-white font-semibold shadow-xs transform scale-105";
+      // Selected: Active light purple blue background with white text
+      return "border-purple-500 bg-purple-500 text-white font-semibold shadow-xs transform scale-105";
     }
 
     // Available (OPEN): Light border with soft hover matching light blue theme
