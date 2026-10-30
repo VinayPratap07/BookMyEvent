@@ -9,7 +9,7 @@ async function initiateBooking(seatIds, showId, userId) {
   try {
     await connection.beginTransaction();
 
-    // 1. Get and lock database rows
+    // 1. Get database rows
     const seats = await getSeats(connection, seatIds, showId);
 
     // 2. Validate seat availability
@@ -20,17 +20,17 @@ async function initiateBooking(seatIds, showId, userId) {
       throw new Error("SEATS_UNAVAILABLE");
     }
 
-    // 6. Temporarily reserve seats
+    // 3. Temporarily reserve seats
     const isLocked = await lockSeats(connection, seatIds, showId);
 
     if (!isLocked) {
       throw new Error("SEAT_LOCK_FAILED");
     }
 
-    // 3. Calculate total amount using DB prices
+    // 4. Calculate total amount using DB prices
     const totalAmount = await calculatePrice(seats);
 
-    // 4. Create booking
+    // 5. Create booking
     const bookingId = randomUUID();
     await connection.query(
       `INSERT INTO bookings
@@ -39,7 +39,7 @@ async function initiateBooking(seatIds, showId, userId) {
       [bookingId, userId, showId, totalAmount],
     );
 
-    // 5. Insert booking seats
+    // 6. Insert booking seats
     for (const seat of seats) {
       await connection.query(
         `INSERT INTO booking_seats

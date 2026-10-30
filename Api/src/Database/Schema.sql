@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS bookings (
 
 -- Show seat
 CREATE TABLE IF NOT EXISTS show_seats (
-    show_seat_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    show_seat_id CHAR(36) PRIMARY KEY,
     show_id_ref CHAR(36) NOT NULL,
     seat_id_ref CHAR(36) NOT NULL,
     status ENUM('BOOKED', 'LOCKED', 'OPEN')
