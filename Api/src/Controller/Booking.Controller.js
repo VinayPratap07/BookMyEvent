@@ -1,5 +1,5 @@
 const { pool } = require("../Database/Connection");
-const { initiatePreBooking } = require("../Service/Booking.Service");
+const { initiateBooking } = require("../Service/Booking.Service");
 const { createPaymentSession } = require("../Service/Payment.Service");
 
 async function BookingSummary(req, res) {
@@ -116,7 +116,9 @@ async function BookingSummary(req, res) {
 }
 
 async function createBookingSession(req, res) {
-  const { seatIds } = req.body;
+  const { seatIds, showId } = req.body;
+  const userId = req.user.id;
+
   if (!Array.isArray(seatIds) || seatIds.length === 0) {
     return res.status(422).json({
       message: "Please select at least one seat",
@@ -124,18 +126,25 @@ async function createBookingSession(req, res) {
   }
 
   try {
-    const amount = await initiatePreBooking(seatIds);
+    const booking = await initiateBooking(seatIds, showId, userId);
 
-    if (amount === false) {
+    const session = await createPaymentSession(
+      booking.amount,
+      booking.bookingId,
+    );
+
+    return res.status(201).json({
+      redirectUrl: session.url,
+    });
+  } catch (error) {
+    if (error.message === "SEATS_UNAVAILABLE") {
       return res.status(409).json({
         message: "One or more seats are unavailable",
       });
     }
 
-    const session = await createPaymentSession(amount, "Seats");
+    console.error(error);
 
-    return res.status(201).json({ redirectUrl: session.url });
-  } catch (error) {
     return res.status(500).json({
       message: "Failed to create booking session",
     });

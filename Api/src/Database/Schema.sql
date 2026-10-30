@@ -107,8 +107,6 @@ CREATE TABLE IF NOT EXISTS booking_seats (
     show_seat_id_ref CHAR(36) NOT NULL,
     price DECIMAL(10,2) NOT NULL,
 
-    UNIQUE (show_seat_id_ref),
-
     FOREIGN KEY (booking_id_ref) REFERENCES bookings(booking_id),
     FOREIGN KEY (show_seat_id_ref) REFERENCES show_seats(show_seat_id)
 );

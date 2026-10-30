@@ -1,28 +1,27 @@
-const { pool } = require("../Database/Connection");
-
-async function checkSeatAvailability(seatIds) {
-  const [rows] = await pool.query(
-    `SELECT status FROM show_seats
-        WHERE show_seat_id IN (?) `,
-    [seatIds],
+async function getSeats(connection, seatIds, showId) {
+  const [seats] = await connection.query(
+    `SELECT show_seat_id, price, status
+     FROM show_seats
+     WHERE show_id_ref = ?
+     AND show_seat_id IN (?)
+     ORDER BY show_seat_id
+     FOR UPDATE`,
+    [showId, seatIds],
   );
 
-  return (
-    rows.length === seatIds.length &&
-    rows.every((seat) => seat.status === "OPEN")
-  );
+  return seats;
 }
 
-async function lockSeats(seatIds) {
-  const [result] = await pool.query(
-    `
-    UPDATE show_seats 
-    SET status = "LOCKED" 
-    WHERE show_seat_id IN (?)`,
-    [seatIds],
+async function lockSeats(connection, seatIds, showId) {
+  const [result] = await connection.query(
+    `UPDATE show_seats
+     SET status = 'LOCKED'
+     WHERE show_id_ref = ?
+     AND show_seat_id IN (?)`,
+    [showId, seatIds],
   );
 
   return result.affectedRows === seatIds.length;
 }
 
-module.exports = { checkSeatAvailability, lockSeats };
+module.exports = { getSeats, lockSeats };
