@@ -10,6 +10,8 @@ import SignupPage from "./Pages/SignupPage.tsx";
 import SigninPage from "./Pages/SigninPage.tsx";
 import SeatPage from "./Pages/SeatsPage.tsx";
 import SummaryPage from "./Pages/SummaryPage.tsx";
+import AccountsPage from "./Pages/AccountsPage.tsx";
+import ProfileComponent from "./Components/ProfileComponent.tsx";
 
 const routes = createBrowserRouter([
   {
@@ -21,8 +23,18 @@ const routes = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/shows/:id",
+        path: "shows/:id",
         element: <EventShowPage />,
+      },
+      {
+        path: "/account",
+        element: <AccountsPage />,
+        children: [
+          {
+            path: "profile",
+            element: <ProfileComponent />,
+          },
+        ],
       },
     ],
   },
@@ -34,6 +46,7 @@ const routes = createBrowserRouter([
     path: "/booking/summary",
     element: <SummaryPage />,
   },
+
   {
     path: "/signup",
     element: <SignupPage />,
