@@ -1,7 +1,12 @@
-import React, { useState } from "react";
-import { FiEdit2, FiCheck, FiPlus, FiCalendar, FiUser } from "react-icons/fi";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { FiEdit2, FiCheck, FiCalendar, FiUser } from "react-icons/fi";
+import { getUserInfo } from "../API/UserApi";
+import LoadingScreen from "./Loading";
+import ErrorState from "./Error";
+import axios from "axios";
 
-export const ProfileComponent: React.FC = () => {
+function ProfileComponent() {
   const [mobileNumber, setMobileNumber] = useState<string>("");
   const [email, setEmail] = useState<string>("vinaypratap10457.10d@gmail.com");
   const [firstName, setFirstName] = useState<string>("");
@@ -9,6 +14,31 @@ export const ProfileComponent: React.FC = () => {
   const [birthday, setBirthday] = useState<string>("");
   const [identity, setIdentity] = useState<"Woman" | "Man" | null>(null);
   const [isMarried, setIsMarried] = useState<"Yes" | "No" | null>(null);
+
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["userData"],
+    queryFn: getUserInfo,
+    refetchInterval: false,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
+
+  console.log(data);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    const errorMessage = axios.isAxiosError(error)
+      ? error.response?.data?.message
+      : "Something went wrong";
+
+    const statusCode = axios.isAxiosError(error)
+      ? error.response?.status
+      : undefined;
+    return <ErrorState description={errorMessage} title={statusCode} />;
+  }
 
   return (
     <div className="w-full max-w-4xl bg-white rounded-3xl border border-purple-100 shadow-sm p-8 font-sans text-gray-800">
@@ -189,6 +219,6 @@ export const ProfileComponent: React.FC = () => {
       </form>
     </div>
   );
-};
+}
 
 export default ProfileComponent;

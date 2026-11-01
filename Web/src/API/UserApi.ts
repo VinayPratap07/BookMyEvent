@@ -23,3 +23,8 @@ export const loginUser = async (data: {
 
   return res.data;
 };
+
+export const getUserInfo = async () => {
+  const res = await api.get("/me", { withCredentials: true });
+  return res.data;
+};

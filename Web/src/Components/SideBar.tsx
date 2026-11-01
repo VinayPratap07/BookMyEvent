@@ -33,7 +33,7 @@ const navItems: NavItem[] = [
   { id: "rewards", label: "Rewards", icon: FiGift },
 ];
 
-export const Sidebar: React.FC = () => {
+function Sidebar() {
   const [activeTab, setActiveTab] = useState<string>("profile");
 
   return (
@@ -56,7 +56,7 @@ export const Sidebar: React.FC = () => {
 
         {/* Navigation Items */}
         <nav className="flex flex-col space-y-1">
-          {navItems.map((item, index) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             const isStreamLibrary = item.id === "stream";
@@ -108,6 +108,6 @@ export const Sidebar: React.FC = () => {
       </div>
     </aside>
   );
-};
+}
 
 export default Sidebar;

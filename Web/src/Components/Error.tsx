@@ -11,7 +11,7 @@ export type ErrorVariant = "general" | "network" | "notFound";
 
 interface ErrorStateProps {
   /** Title header for the error message */
-  title?: string;
+  title?: number;
   /** Detailed explanatory description */
   description?: string;
   /** Variant style and icon preset */

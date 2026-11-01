@@ -64,7 +64,7 @@ const SOCIAL_LINKS = [
   { icon: FaYoutube, href: "#", label: "YouTube" },
 ];
 
-export const Footer: React.FC = () => {
+function Footer() {
   const [email, setEmail] = useState<string>("");
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
 
@@ -216,6 +216,6 @@ export const Footer: React.FC = () => {
       </div>
     </footer>
   );
-};
+}
 
 export default Footer;

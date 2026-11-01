@@ -13,7 +13,7 @@ async function getCurrUser(req, res) {
       [id],
     );
 
-    return res.status(200).json({ user: user });
+    return res.status(200).json({ user: user[0] });
   } catch (err) {
     console.log(err);
     return res.status(500).json({

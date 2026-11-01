@@ -7,7 +7,7 @@ function Card({ shows }: HomeShowProps) {
   return (
     <article
       key={event_id}
-      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-sky-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sky-300 hover:shadow-lg"
+      className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-purple-100 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-purple-300 hover:shadow-lg"
     >
       <Link to={`/shows/${event_id}`}>
         {/* Thumbnail */}
@@ -20,7 +20,7 @@ function Card({ shows }: HomeShowProps) {
           />
         </div>
         <div className="flex flex-1 flex-col p-4">
-          <span className="text-lg font-semibold leading-6 text-slate-800 transition-colors duration-200 group-hover:text-sky-600">
+          <span className="text-lg font-semibold leading-6 text-slate-800 transition-colors duration-200 group-hover:text-purple-600">
             {event_name}
           </span>
           <p className="text-sm text-gray-600">{genere}</p>
