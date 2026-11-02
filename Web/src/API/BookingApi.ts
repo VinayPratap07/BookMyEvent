@@ -16,3 +16,15 @@ export const getBookingSummary = async (showId: string, seatIds: string[]) => {
 
   return res.data;
 };
+
+//Create Booking session
+export const initiateBooking = async (data: {
+  showId: string;
+  seatIds: string[];
+}) => {
+  const res = await api.post("/create-session", data, {
+    withCredentials: true,
+  });
+
+  return res.data;
+};

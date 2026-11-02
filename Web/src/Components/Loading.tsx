@@ -1,17 +1,6 @@
-import React from "react";
 import { HiTicket } from "react-icons/hi2";
 
-interface LoadingScreenProps {
-  /** Optional loading message displayed underneath */
-  message?: string;
-  /** If true, covers the entire viewport as an overlay; if false, fits its parent container */
-  fullScreen?: boolean;
-}
-
-export const LoadingScreen: React.FC<LoadingScreenProps> = ({
-  message = "Loading events...",
-  fullScreen = true,
-}) => {
+function LoadingScreen({ message = "Loading events...", fullScreen = true }) {
   return (
     <div
       role="status"
@@ -49,6 +38,6 @@ export const LoadingScreen: React.FC<LoadingScreenProps> = ({
       <span className="sr-only">Loading, please wait...</span>
     </div>
   );
-};
+}
 
 export default LoadingScreen;

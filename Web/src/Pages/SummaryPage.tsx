@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   FiArrowLeft,
   FiCalendar,
@@ -11,15 +11,13 @@ import {
 } from "react-icons/fi";
 import { HiTicket } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { getBookingSummary } from "../API/BookingApi";
+import { getBookingSummary, initiateBooking } from "../API/BookingApi";
 import LoadingScreen from "../Components/Loading";
-import { useState } from "react";
 import type { BookingSummaryApiResponse } from "../API/API_Response";
 
 function SummaryPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const showQuery = searchParams.get("showId")?.trim() ?? "";
   const seatQuery =
@@ -38,7 +36,14 @@ function SummaryPage() {
       refetchOnWindowFocus: false,
     });
 
-  if (isLoading) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: initiateBooking,
+    onSuccess: (data) => {
+      window.location.href = data.redirectUrl;
+    },
+  });
+
+  if (isLoading || isPending) {
     return <LoadingScreen message="Generating order review..." />;
   }
 
@@ -101,8 +106,10 @@ function SummaryPage() {
   const totalAmount = basePrice + convenienceFee + gst;
 
   const handlePay = () => {
-    setIsProcessing(true);
-    // Proceed to checkout integration
+    mutate({
+      showId: showQuery,
+      seatIds: seatQuery,
+    });
     console.log("Proceeding to payment for seats:", selectedSeats);
   };
 
@@ -311,11 +318,11 @@ function SummaryPage() {
               {/* Pay Button */}
               <button
                 type="button"
-                disabled={isProcessing}
+                disabled={isPending}
                 onClick={handlePay}
                 className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-sky-400 py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-200 active:bg-sky-600 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isProcessing ? (
+                {isPending ? (
                   <>
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     <span>Processing Payment...</span>
