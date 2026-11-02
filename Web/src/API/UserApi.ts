@@ -28,3 +28,9 @@ export const getUserInfo = async () => {
   const res = await api.get("/me", { withCredentials: true });
   return res.data;
 };
+
+export const logoutUser = async () => {
+  const res = await api.post("/logout", {}, { withCredentials: true });
+
+  return res.data;
+};

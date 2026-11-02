@@ -10,6 +10,10 @@ import {
 import { HiOutlineReceiptTax } from "react-icons/hi";
 import { MdOutlineDevices, MdOutlineCreditCard } from "react-icons/md";
 import { FiGift } from "react-icons/fi";
+import { useMutation } from "@tanstack/react-query";
+import { logoutUser } from "../API/UserApi";
+import { useNavigate } from "react-router-dom";
+import LoadingScreen from "./Loading";
 
 interface NavItem {
   id: string;
@@ -35,6 +39,22 @@ const navItems: NavItem[] = [
 
 function Sidebar() {
   const [activeTab, setActiveTab] = useState<string>("profile");
+  const navigate = useNavigate();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      navigate("/");
+    },
+  });
+
+  if (isPending) {
+    return <LoadingScreen />;
+  }
+
+  const handleLogOut = () => {
+    mutate();
+  };
 
   return (
     <aside className="w-64 h-[720px] bg-white rounded-2xl border border-purple-100 shadow-sm flex flex-col justify-between p-4 font-sans select-none">
@@ -100,6 +120,7 @@ function Sidebar() {
       <div className="pt-4 border-t border-purple-100/70">
         <button
           type="button"
+          onClick={handleLogOut}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-purple-600 hover:bg-purple-50 transition-colors"
         >
           <IoLogOutOutline className="w-5 h-5 text-purple-600" />
