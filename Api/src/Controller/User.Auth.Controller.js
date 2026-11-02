@@ -113,4 +113,17 @@ async function loginUser(req, res) {
   }
 }
 
-module.exports = { getCurrUser, registerUser, loginUser };
+//Funciton to logout user
+async function logOutUser(req, res) {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "strict",
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+}
+
+module.exports = { getCurrUser, registerUser, loginUser, logOutUser };
