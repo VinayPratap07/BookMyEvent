@@ -130,7 +130,9 @@ async function createBookingSession(req, res) {
 
     const session = await createPaymentSession(
       booking.amount,
+      "Ticket",
       booking.bookingId,
+      userId,
     );
 
     return res.status(201).json({

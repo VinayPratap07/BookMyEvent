@@ -13,6 +13,7 @@ import SummaryPage from "./Pages/SummaryPage.tsx";
 import AccountsPage from "./Pages/AccountsPage.tsx";
 import ProfileComponent from "./Components/ProfileComponent.tsx";
 import RedirectPage from "./Pages/RedirectPage.tsx";
+import PaymentSuccess from "./Pages/Successful PaymentPage.tsx";
 
 const routes = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ const routes = createBrowserRouter([
   {
     path: "/signin",
     element: <SigninPage />,
+  },
+  {
+    path: "/success",
+    element: <PaymentSuccess />,
   },
   {
     path: "*",
