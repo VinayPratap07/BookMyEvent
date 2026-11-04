@@ -1,6 +1,6 @@
 const Stripe = require("stripe");
 
-const stripe = new Stripe(process.env.STRIPE_SECERET_KEY);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 async function createPaymentSession(amount, ticketName, bookingId, userId) {
   const session = await stripe.checkout.sessions.create({
@@ -36,4 +36,4 @@ async function createPaymentSession(amount, ticketName, bookingId, userId) {
   return session;
 }
 
-module.exports = { createPaymentSession };
+module.exports = { createPaymentSession, stripe };

@@ -15,7 +15,7 @@ const {
 const userRoutes = require("./Routes/User.Auth.Routes");
 const organiserRoutes = require("./Routes/Organiser.Routes");
 const showRoutes = require("./Routes/Show.Routes");
-const testRoutes = require("./Routes/Payment.Routes");
+const paymentRoutes = require("./Routes/Payment.Routes");
 const bookingRoutes = require("./Routes/Booking.Routes");
 
 const app = express();
@@ -29,6 +29,9 @@ const corsOptions = {
   origin: process.env.CLIENT_URL,
   credentials: true,
 };
+
+//Stripe Webhook route
+app.use("/api/payments", paymentRoutes);
 
 //Middlewares
 app.use(express.json());
@@ -46,7 +49,7 @@ app.use(
   organiserRoutes,
 );
 app.use("/api/show", showRoutes);
-app.use("/api/test", testRoutes);
+// app.use("/api/test", testRoutes);
 app.use("/api/book", forceAuthentication, bookingRoutes);
 
 app.listen(PORT, () => {
