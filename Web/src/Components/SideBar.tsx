@@ -19,7 +19,7 @@ interface NavItem {
   id: string;
   label: string;
   icon: React.ElementType;
-  hasChevron?: boolean;
+  navLink: string;
 }
 
 const navItems: NavItem[] = [
@@ -27,14 +27,39 @@ const navItems: NavItem[] = [
     id: "profile",
     label: "Profile",
     icon: IoPersonCircleOutline,
-    hasChevron: true,
+    navLink: "profile",
   },
-  { id: "orders", label: "Your Orders", icon: HiOutlineReceiptTax },
-  { id: "devices", label: "Saved Devices", icon: MdOutlineDevices },
-  { id: "stream", label: "Stream Library", icon: IoPlayCircleOutline },
-  { id: "wishlist", label: "Your Wishlist", icon: IoHeartOutline },
-  { id: "quikpay", label: "QuikPay", icon: MdOutlineCreditCard },
-  { id: "rewards", label: "Rewards", icon: FiGift },
+  {
+    id: "bookings",
+    label: "Your Bookings",
+    icon: HiOutlineReceiptTax,
+    navLink: "bookings",
+  },
+  {
+    id: "devices",
+    label: "Saved Devices",
+    icon: MdOutlineDevices,
+    navLink: "devices",
+  },
+  {
+    id: "stream",
+    label: "Stream Library",
+    icon: IoPlayCircleOutline,
+    navLink: "stream",
+  },
+  {
+    id: "wishlist",
+    label: "Your Wishlist",
+    icon: IoHeartOutline,
+    navLink: "wishlist",
+  },
+  {
+    id: "quikpay",
+    label: "QuikPay",
+    icon: MdOutlineCreditCard,
+    navLink: "quikpay",
+  },
+  { id: "rewards", label: "Rewards", icon: FiGift, navLink: "rewards" },
 ];
 
 function Sidebar() {
@@ -56,6 +81,11 @@ function Sidebar() {
     mutate();
   };
 
+  const handleTabChangeClick = (id: string, navLink: string) => {
+    setActiveTab(id);
+    navigate(navLink);
+  };
+
   return (
     <aside className="w-64 h-[720px] bg-white rounded-2xl border border-purple-100 shadow-sm flex flex-col justify-between p-4 font-sans select-none">
       {/* Top Section */}
@@ -65,13 +95,6 @@ function Sidebar() {
           <h2 className="text-xl font-bold text-gray-800 tracking-tight">
             My Account
           </h2>
-          <button
-            type="button"
-            className="text-gray-400 hover:text-purple-700 transition-colors p-1 rounded-md"
-            aria-label="Close"
-          >
-            <IoCloseOutline className="w-6 h-6" />
-          </button>
         </div>
 
         {/* Navigation Items */}
@@ -90,7 +113,7 @@ function Sidebar() {
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => handleTabChangeClick(item.id, item.navLink)}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
                     isActive
                       ? "bg-purple-50 text-purple-700 font-semibold shadow-xs"

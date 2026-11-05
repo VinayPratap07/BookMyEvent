@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 interface NavbarProps {
   onSearch?: (query: string) => void;
   onCitySelect?: (city: string) => void;
-  onSignInClick?: () => void;
 }
 
 const CITIES: string[] = [
@@ -20,11 +19,7 @@ const CITIES: string[] = [
   "Ahmedabad",
 ];
 
-export const Navbar: React.FC<NavbarProps> = ({
-  onSearch,
-  onCitySelect,
-  onSignInClick,
-}) => {
+function Navbar({ onSearch, onCitySelect }: NavbarProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedCity, setSelectedCity] = useState<string>("Delhi-NCR");
   const [isCityDropdownOpen, setIsCityDropdownOpen] = useState<boolean>(false);
@@ -167,6 +162,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       </div>
     </header>
   );
-};
+}
 
 export default Navbar;

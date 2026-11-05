@@ -36,6 +36,24 @@ const routes = createBrowserRouter([
             path: "profile",
             element: <ProfileComponent />,
           },
+          {
+            path: "bookings",
+          },
+          {
+            path: "devices",
+          },
+          {
+            path: "stream",
+          },
+          {
+            path: "wishlist",
+          },
+          {
+            path: "quikpay",
+          },
+          {
+            path: "rewards",
+          },
         ],
       },
     ],

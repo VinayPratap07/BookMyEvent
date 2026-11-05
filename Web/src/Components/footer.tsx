@@ -146,11 +146,11 @@ function Footer() {
             <div className="mt-5 space-y-2 text-xs text-slate-500">
               <div className="flex items-center gap-2">
                 <FiMapPin className="h-4 w-4 shrink-0 text-purple-400" />
-                <span>Sector 62, Noida, Uttar Pradesh, India</span>
+                <span>Sector 15, Noida, Uttar Pradesh, India</span>
               </div>
               <div className="flex items-center gap-2">
                 <FiPhone className="h-4 w-4 shrink-0 text-purple-400" />
-                <span>+91 (011) 4567-8900</span>
+                <span>+91 823 4567 190</span>
               </div>
             </div>
 
