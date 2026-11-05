@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
-import type { DateItem } from "../API/API_Response";
+
+export interface DateItem {
+  dayName: string;
+  dayNumber: number;
+  month: string;
+  fullDate: string;
+}
 
 function DateFilter() {
   const [selectedDate, setSelectedDate] = useState<string>("2026-11-06");

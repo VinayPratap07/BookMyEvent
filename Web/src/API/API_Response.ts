@@ -130,10 +130,3 @@ export interface ShowsApiResponse {
   event: ApiEvent;
   venues: ApiVenue[];
 }
-
-export interface DateItem {
-  dayName: string;
-  dayNumber: number;
-  month: string;
-  fullDate: string;
-}
