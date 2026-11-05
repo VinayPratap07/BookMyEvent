@@ -58,7 +58,7 @@ const routes = createBrowserRouter([
     element: <SigninPage />,
   },
   {
-    path: "/success",
+    path: "/payment/success",
     element: <PaymentSuccess />,
   },
   {

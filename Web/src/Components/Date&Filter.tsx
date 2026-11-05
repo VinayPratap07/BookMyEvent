@@ -2,19 +2,22 @@ import { useState } from "react";
 import { FiChevronDown, FiSearch } from "react-icons/fi";
 import type { DateItem } from "../API/API_Response";
 
-// --- API Response Interfaces ---
-const DATES: DateItem[] = [
-  { dayName: "FRI", dayNumber: 6, month: "NOV", fullDate: "2026-11-06" },
-  { dayName: "SAT", dayNumber: 7, month: "NOV", fullDate: "2026-11-07" },
-  { dayName: "SUN", dayNumber: 8, month: "NOV", fullDate: "2026-11-08" },
-  { dayName: "MON", dayNumber: 9, month: "NOV", fullDate: "2026-11-09" },
-  { dayName: "TUE", dayNumber: 10, month: "NOV", fullDate: "2026-11-10" },
-  { dayName: "WED", dayNumber: 11, month: "NOV", fullDate: "2026-11-11" },
-  { dayName: "THU", dayNumber: 12, month: "NOV", fullDate: "2026-11-12" },
-];
-
 function DateFilter() {
   const [selectedDate, setSelectedDate] = useState<string>("2026-11-06");
+
+  const DATES: DateItem[] = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() + i);
+
+    return {
+      dayName: date
+        .toLocaleDateString("en-US", { weekday: "short" })
+        .toUpperCase(),
+      dayNumber: date.getDate(),
+      month: date.toLocaleDateString("en-US", { month: "short" }).toUpperCase(),
+      fullDate: date.toISOString().split("T")[0],
+    };
+  });
 
   return (
     <section className="sticky top-16 z-30 border-b border-purple-100 bg-white shadow-xs">
