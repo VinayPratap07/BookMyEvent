@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAllShows } from "../API/ShowApi";
-import LoadingScreen from "../Components/Loading";
-import ErrorState from "../Components/Error";
+import { getAllShows } from "../../API/ShowApi";
+import LoadingScreen from "../../Components/Loading";
+import ErrorState from "../../Components/Error";
 import { useParams } from "react-router-dom";
-import type { ShowsApiResponse } from "../API/API_Response";
-import DateFilter from "../Components/Date&Filter";
-import VenuesList from "../Components/VenuesList";
-import EventHeader from "../Components/EventHeader";
+import type { ShowsApiResponse } from "../../API/API_Response";
+import DateFilter from "../../Components/Date&Filter";
+import VenuesList from "../../Components/VenuesList";
+import EventHeader from "../../Components/EventHeader";
 
 function EventShowPage() {
   const { id } = useParams<{ id: string }>();

@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import {
-  IoCloseOutline,
   IoPersonCircleOutline,
   IoPlayCircleOutline,
   IoHeartOutline,
   IoLogOutOutline,
-  IoChevronForward,
 } from "react-icons/io5";
 import { HiOutlineReceiptTax } from "react-icons/hi";
 import { MdOutlineDevices, MdOutlineCreditCard } from "react-icons/md";
@@ -128,10 +126,6 @@ function Sidebar() {
                     />
                     <span>{item.label}</span>
                   </div>
-
-                  {item.hasChevron && isActive && (
-                    <IoChevronForward className="w-4 h-4 text-purple-700" />
-                  )}
                 </button>
               </React.Fragment>
             );

@@ -23,12 +23,12 @@ async function stripeWebhook(req, res) {
         const session = event.data.object;
 
         if (session.payment_status === "paid") {
-          const { bookingId } = session.metadata;
+          // const { bookingId } = session.metadata;
 
           // Call your booking service to confirm booking
           // await confirmBooking(bookingId, session.id);
 
-          console.log("Payment successful:", bookingId);
+          console.log(event);
         }
 
         break;

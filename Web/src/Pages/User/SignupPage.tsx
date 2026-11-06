@@ -11,7 +11,7 @@ import {
 } from "react-icons/fi";
 import { FaGoogle, FaApple } from "react-icons/fa";
 import { HiTicket } from "react-icons/hi2";
-import { signupUser } from "../API/UserApi";
+import { signupUser } from "../../API/UserApi";
 import { Link, useNavigate } from "react-router-dom";
 
 function SignupPage() {

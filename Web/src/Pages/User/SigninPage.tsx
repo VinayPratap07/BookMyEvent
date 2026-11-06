@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { FiUser, FiLock, FiEye, FiEyeOff, FiArrowRight } from "react-icons/fi";
 import { FaGoogle, FaApple } from "react-icons/fa";
 import { HiTicket } from "react-icons/hi2";
-import { loginUser } from "../API/UserApi";
+import { loginUser } from "../../API/UserApi";
 import { Link, useNavigate } from "react-router-dom";
 
 function SigninPage() {

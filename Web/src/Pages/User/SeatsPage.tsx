@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { FiArrowLeft, FiCheck, FiInfo } from "react-icons/fi";
-import type { ApiShowSeat, SeatTierSection } from "../API/API_Response";
-import SeatComponent from "../Components/SeatComponent";
+import type { ApiShowSeat, SeatTierSection } from "../../API/API_Response";
+import SeatComponent from "../../Components/SeatComponent";
 import { useQuery } from "@tanstack/react-query";
-import { getShowSeats } from "../API/ShowApi";
+import { getShowSeats } from "../../API/ShowApi";
 import { useNavigate, useParams } from "react-router-dom";
-import LoadingScreen from "../Components/Loading";
+import LoadingScreen from "../../Components/Loading";
 
 function SeatPage() {
   const [selectedSeatIds, setSelectedSeatIds] = useState<string[]>([]);
