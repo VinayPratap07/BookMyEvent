@@ -16,6 +16,7 @@ import RedirectPage from "../Pages/User/RedirectPage";
 import UserLayout from "../layouts/UserLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminDashboard from "../Pages/Admin/DashboardPage";
 
 const router = createBrowserRouter([
   //User Routes
@@ -85,11 +86,17 @@ const router = createBrowserRouter([
 
   //Protected Admin Routes
   {
-    element: <ProtectedRoute allowedRoles={["admin"]} />,
+    // element: <ProtectedRoute allowedRoles={["admin"]} />,
     children: [
       {
         path: "/admin",
         element: <AdminLayout />,
+        children: [
+          {
+            path: "dashboard",
+            element: <AdminDashboard />,
+          },
+        ],
       },
     ],
   },
