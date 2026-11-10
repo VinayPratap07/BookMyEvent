@@ -17,6 +17,9 @@ import UserLayout from "../layouts/UserLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminDashboard from "../Pages/Admin/DashboardPage";
+import ManageVenue from "../Pages/Admin/VenuePage";
+import SeatAndPrice from "../Pages/Admin/Seats&PricePage";
+import ManageShows from "../Pages/Admin/ManageShowsPage";
 
 const router = createBrowserRouter([
   //User Routes
@@ -95,6 +98,18 @@ const router = createBrowserRouter([
           {
             path: "dashboard",
             element: <AdminDashboard />,
+          },
+          {
+            path: "manageShows",
+            element: <ManageShows />,
+          },
+          {
+            path: "seatingLayout",
+            element: <SeatAndPrice />,
+          },
+          {
+            path: "venue",
+            element: <ManageVenue />,
           },
         ],
       },

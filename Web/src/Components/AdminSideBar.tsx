@@ -9,28 +9,56 @@ import {
   MdOutlineLogout,
 } from "react-icons/md";
 import { FiChevronRight } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 
 interface AdminNavItem {
-  id: string;
+  id: Number;
+  navLink: string;
   label: string;
   icon: React.ElementType;
 }
 
 const mainNavItems: AdminNavItem[] = [
-  { id: "dashboard", label: "Dashboard", icon: MdOutlineDashboard },
-  { id: "shows", label: "Manage Shows", icon: MdOutlineTheaters },
-  { id: "pricing", label: "Pricing", icon: MdOutlineAttachMoney },
-  { id: "venue", label: "Venue", icon: MdOutlinePlace },
-  { id: "bookings", label: "Bookings", icon: MdOutlineConfirmationNumber },
-  { id: "settings", label: "Settings", icon: MdOutlineSettings },
+  {
+    id: 1,
+    navLink: "dashboard",
+    label: "Dashboard",
+    icon: MdOutlineDashboard,
+  },
+  {
+    id: 2,
+    navLink: "manageShows",
+    label: "Manage Shows",
+    icon: MdOutlineTheaters,
+  },
+  {
+    id: 3,
+    navLink: "seatingLayout",
+    label: "Seat & Price",
+    icon: MdOutlineAttachMoney,
+  },
+  { id: 4, navLink: "venue", label: "Venue", icon: MdOutlinePlace },
+  {
+    id: 5,
+    navLink: "bookings",
+    label: "Bookings",
+    icon: MdOutlineConfirmationNumber,
+  },
+  { id: 6, navLink: "settings", label: "Settings", icon: MdOutlineSettings },
 ];
 
 function AdminSidebar() {
-  const [activeTab, setActiveTab] = useState<string>("dashboard");
+  const [activeTab, setActiveTab] = useState<Number>(1);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     // Replace with auth clear / redirect logic
-    window.location.href = "/login";
+    navigate("/login");
+  };
+
+  const handleTabChange = (navLink: string, id: Number) => {
+    setActiveTab(id);
+    navigate(`${navLink}`);
   };
 
   return (
@@ -65,9 +93,9 @@ function AdminSidebar() {
 
               return (
                 <button
-                  key={item.id}
+                  key={item.navLink}
                   type="button"
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => handleTabChange(item.navLink, item.id)}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
                     isActive
                       ? "bg-purple-950/50 text-white border border-purple-700/60 shadow-sm shadow-purple-900/40"
