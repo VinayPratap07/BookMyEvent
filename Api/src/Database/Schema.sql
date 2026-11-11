@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS venue(
 CREATE TABLE IF NOT EXISTS screens(
     screen_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     screen_name VARCHAR(100) NOT NULL,
+    screen_type VARCHAR(50) NOT NULL,
     venue_id_ref CHAR(36) NOT NULL,
     total_seats INT,
     FOREIGN KEY (venue_id_ref) REFERENCES venue(venue_id)
