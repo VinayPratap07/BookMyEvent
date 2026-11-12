@@ -1,28 +1,27 @@
 import { useState } from "react";
 import type { Screen, ScreenFormData } from "../Types/screen";
+import { useMutation } from "@tanstack/react-query";
+import { addScreens } from "../API/AdminApi";
 
 const initialScreens: Screen[] = [
   {
     id: "SCR-01",
     name: "Audi 1 (IMAX)",
-    format: "IMAX 2D/3D",
-    sound: "IMAX 12.0 Channel",
+    type: "IMAX 2D/3D",
     totalSeats: 320,
     status: "Operational",
   },
   {
     id: "SCR-02",
     name: "Audi 2 (Atmos)",
-    format: "Dolby Atmos 2D",
-    sound: "Dolby Atmos",
+    type: "Dolby Atmos 2D",
     totalSeats: 210,
     status: "Operational",
   },
   {
     id: "SCR-03",
     name: "Audi 3 (4DX Dynamic)",
-    format: "4DX",
-    sound: "7.1 Surround",
+    type: "4DX",
     totalSeats: 140,
     status: "Maintenance",
   },
@@ -31,20 +30,18 @@ const initialScreens: Screen[] = [
 export function useScreens() {
   const [screens, setScreens] = useState<Screen[]>(initialScreens);
 
+  const AddMutation = useMutation({
+    mutationFn: addScreens,
+    onSuccess: () => {
+      console.log("Screen added");
+    },
+  });
+
   const addScreen = (data: ScreenFormData) => {
-    setScreens((prev) => {
-      const nextId =
-        Math.max(
-          0,
-          ...prev.map((screen) => Number(screen.id.match(/\d+$/)?.[0] ?? 0)),
-        ) + 1;
-
-      const newScreen: Screen = {
-        id: `SCR-${String(nextId).padStart(2, "0")}`,
-        ...data,
-      };
-
-      return [...prev, newScreen];
+    AddMutation.mutate({
+      ScreenName: data.name,
+      ScreenType: data.type,
+      totalSeats: data.totalSeats,
     });
   };
 

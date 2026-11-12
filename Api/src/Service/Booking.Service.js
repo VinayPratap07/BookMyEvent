@@ -63,4 +63,8 @@ async function initiateBooking(seatIds, showId, userId) {
   }
 }
 
-module.exports = { initiateBooking };
+async function confirmBooking(bookingData) {
+  const { userId, showId, seats, amount, paymentId } = bookingData;
+}
+
+module.exports = { initiateBooking, confirmBooking };

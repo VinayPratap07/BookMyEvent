@@ -5,8 +5,8 @@ const api = axios.create({
 });
 
 export const addScreens = async (data: {
-  name: string;
-  type: string;
+  ScreenName: string;
+  ScreenType: string;
   totalSeats: Number;
 }) => {
   const res = await api.post("/addScreen", data, { withCredentials: true });

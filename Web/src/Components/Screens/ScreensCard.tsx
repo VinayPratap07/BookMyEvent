@@ -46,7 +46,7 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
               <FiTv className="w-4 h-4 text-purple-400" />
               Projection
             </span>
-            <span className="font-semibold text-white">{screen.format}</span>
+            <span className="font-semibold text-white">{screen.type}</span>
           </div>
 
           <div className="flex items-center justify-between text-gray-300">
@@ -54,7 +54,7 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
               <FiSpeaker className="w-4 h-4 text-purple-400" />
               Acoustics
             </span>
-            <span className="font-semibold text-white">{screen.sound}</span>
+            <span className="font-semibold text-white">{screen.type}</span>
           </div>
 
           <div className="flex items-center justify-between text-gray-300">

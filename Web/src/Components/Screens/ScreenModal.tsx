@@ -12,8 +12,7 @@ interface ScreenModalProps {
 
 const defaultFormData: ScreenFormData = {
   name: "",
-  format: "Dolby Atmos 2D",
-  sound: "Dolby Atmos",
+  type: "Dolby Atmos 2D",
   totalSeats: 180,
   status: "Operational",
 };
@@ -23,8 +22,7 @@ function ScreenModal({ screen, onClose, onSave }: ScreenModalProps) {
     screen
       ? {
           name: screen.name,
-          format: screen.format,
-          sound: screen.sound,
+          type: screen.type,
           totalSeats: screen.totalSeats,
           status: screen.status,
         }

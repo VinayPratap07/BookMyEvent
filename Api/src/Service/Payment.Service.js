@@ -36,4 +36,6 @@ async function createPaymentSession(amount, ticketName, bookingId, userId) {
   return session;
 }
 
+async function createPaymentInfo() {}
+
 module.exports = { createPaymentSession, stripe };

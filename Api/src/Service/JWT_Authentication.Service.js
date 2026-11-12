@@ -3,11 +3,15 @@ const SECRET = process.env.JWT_SECRET;
 
 //Generates token for user storing their email and id inside the payload
 function createTokenForUser(user) {
-  const payload = {
+  let payload = {
     id: user.user_id,
     email: user.email,
     role: user.role,
   };
+
+  if (user.role === "ADMIN") {
+    payload.venueId = user.venue_id;
+  }
 
   const token = JWT.sign(payload, SECRET);
 

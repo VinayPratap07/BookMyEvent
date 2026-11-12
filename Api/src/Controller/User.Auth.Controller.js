@@ -72,8 +72,10 @@ async function loginUser(req, res) {
 
   try {
     const [rows] = await pool.query(
-      `SELECT * FROM users
-       WHERE email = ? OR phone_no = ?`,
+      `SELECT users.*, venue.venue_id
+        FROM users
+        LEFT JOIN venue ON users.user_id = venue.owned_by
+        WHERE users.email = ? OR users.phone_no = ?`,
       [identifier, identifier],
     );
 

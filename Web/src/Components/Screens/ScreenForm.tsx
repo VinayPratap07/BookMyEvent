@@ -40,9 +40,9 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
           </label>
 
           <select
-            value={formData.format}
+            value={formData.type}
             onChange={(e) =>
-              updateField("format", e.target.value as Screen["format"])
+              updateField("type", e.target.value as Screen["type"])
             }
             className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
           >
@@ -53,7 +53,7 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
           </select>
         </div>
 
-        <div>
+        {/* <div>
           <label className="block text-gray-400 mb-1.5">
             Audio Calibration
           </label>
@@ -69,7 +69,7 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
             <option value="IMAX 12.0 Channel">IMAX 12.0 Channel</option>
             <option value="7.1 Surround">7.1 Surround</option>
           </select>
-        </div>
+        </div> */}
       </div>
 
       <div>
