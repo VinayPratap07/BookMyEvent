@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import HeroSection from "../../Components/Hero.Section";
-import Card from "../../Components/card";
+import HeroSection from "../../Components/UsersComponents/Hero.Section";
+
 import { getAllEvents } from "../../API/ShowApi";
 import LoadingScreen from "../../Components/Loading";
 import ErrorState from "../../Components/Error";
 import type { Show } from "../../API/API_Response";
+import Card from "../../Components/UsersComponents/card";
 
 function HomePage() {
   const { isLoading, error, data } = useQuery({

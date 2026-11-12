@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Screen, ScreenFormData } from "../Types/screen";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { addScreens, getScreens } from "../API/AdminApi";
 
 const initialScreens: Screen[] = [
@@ -29,6 +29,7 @@ const initialScreens: Screen[] = [
 
 export function useScreens() {
   const [screens, setScreens] = useState<Screen[]>(initialScreens);
+  const queryClient = useQueryClient();
 
   const {
     isLoading,
@@ -47,7 +48,9 @@ export function useScreens() {
   const AddMutation = useMutation({
     mutationFn: addScreens,
     onSuccess: () => {
-      console.log("Screen added");
+      queryClient.invalidateQueries({
+        queryKey: ["screens"],
+      });
     },
   });
 

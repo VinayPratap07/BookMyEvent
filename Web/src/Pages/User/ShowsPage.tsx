@@ -4,9 +4,10 @@ import LoadingScreen from "../../Components/Loading";
 import ErrorState from "../../Components/Error";
 import { useParams } from "react-router-dom";
 import type { ShowsApiResponse } from "../../API/API_Response";
-import DateFilter from "../../Components/Date&Filter";
-import VenuesList from "../../Components/VenuesList";
-import EventHeader from "../../Components/EventHeader";
+import DateFilter from "../../Components/UsersComponents/Date&Filter";
+
+import EventHeader from "../../Components/UsersComponents/EventHeader";
+import VenuesList from "../../Components/UsersComponents/VenuesList";
 
 function EventShowPage() {
   const { id } = useParams<{ id: string }>();
