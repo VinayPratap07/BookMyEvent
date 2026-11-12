@@ -40,7 +40,7 @@ async function createScreen(req, res) {
   if (!ScreenName || !venue_id || !totalSeats) {
     return res.status(422).json({ message: "All fields are required" });
   }
-  console.log("here too");
+
   try {
     await pool.query(
       `INSERT INTO screens(screen_name, screen_type, venue_id_ref, total_seats)

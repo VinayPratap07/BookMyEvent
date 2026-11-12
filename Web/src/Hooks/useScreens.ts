@@ -30,11 +30,16 @@ const initialScreens: Screen[] = [
 export function useScreens() {
   const [screens, setScreens] = useState<Screen[]>(initialScreens);
 
-  const { data = [] } = useQuery({
+  const {
+    isLoading,
+    error,
+    data = [],
+  } = useQuery({
     queryKey: ["screens"],
     queryFn: getScreens,
     refetchInterval: false,
     refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 
   const sc = data?.screens ?? [];
@@ -77,6 +82,8 @@ export function useScreens() {
 
   return {
     sc,
+    isLoading,
+    error,
     addScreen,
     updateScreen,
     deleteScreen,

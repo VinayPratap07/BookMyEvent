@@ -11,10 +11,14 @@ import type { Screen, ScreenFormData } from "../../Types/screen";
 import VenueStats from "../../Components/Screens/VenueStats";
 import ScreensGrid from "../../Components/Screens/ScreensGrid";
 import ScreenModal from "../../Components/Screens/ScreenModal";
+import LoadingScreen from "../../Components/Loading";
+import ErrorState from "../../Components/Error";
 
 function ManageVenue() {
   const {
     sc,
+    isLoading,
+    error,
     addScreen,
     updateScreen,
     deleteScreen,
@@ -53,6 +57,14 @@ function ManageVenue() {
   const handleDeleteScreen = (id: string) => {
     deleteScreen(id);
   };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return <ErrorState />;
+  }
 
   return (
     <div className="w-full min-h-screen bg-[#0c0d12] text-gray-200 p-6 sm:p-8 font-sans space-y-8 select-none">

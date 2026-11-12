@@ -5,7 +5,7 @@ function LoadingScreen({ message = "Loading events...", fullScreen = true }) {
     <div
       role="status"
       aria-live="polite"
-      className={`flex flex-col items-center justify-center bg-white/90 backdrop-blur-xs ${
+      className={`flex flex-col items-center justify-center backdrop-blur-xs ${
         fullScreen ? "fixed inset-0 z-50 min-h-screen w-screen" : "h-64 w-full"
       }`}
     >
