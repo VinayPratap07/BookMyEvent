@@ -26,8 +26,8 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
         <input
           type="text"
           required
-          value={formData.name}
-          onChange={(e) => updateField("name", e.target.value)}
+          value={formData.screen_name}
+          onChange={(e) => updateField("screen_name", e.target.value)}
           placeholder="e.g. Audi 4 (Grand Luxe)"
           className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-4 py-2.5 text-white outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition-all text-sm"
         />
@@ -40,9 +40,12 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
           </label>
 
           <select
-            value={formData.type}
+            value={formData.screen_type}
             onChange={(e) =>
-              updateField("type", e.target.value as Screen["type"])
+              updateField(
+                "screen_type",
+                e.target.value as Screen["screen_type"],
+              )
             }
             className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
           >
@@ -79,8 +82,8 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
           type="number"
           min="20"
           required
-          value={formData.totalSeats}
-          onChange={(e) => updateField("totalSeats", Number(e.target.value))}
+          value={formData.total_seats}
+          onChange={(e) => updateField("total_seats", Number(e.target.value))}
           className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
         />
       </div>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Screen, ScreenFormData } from "../Types/screen";
-import { useMutation } from "@tanstack/react-query";
-import { addScreens } from "../API/AdminApi";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { addScreens, getScreens } from "../API/AdminApi";
 
 const initialScreens: Screen[] = [
   {
@@ -30,6 +30,15 @@ const initialScreens: Screen[] = [
 export function useScreens() {
   const [screens, setScreens] = useState<Screen[]>(initialScreens);
 
+  const { data = [] } = useQuery({
+    queryKey: ["screens"],
+    queryFn: getScreens,
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const sc = data?.screens ?? [];
+
   const AddMutation = useMutation({
     mutationFn: addScreens,
     onSuccess: () => {
@@ -39,26 +48,26 @@ export function useScreens() {
 
   const addScreen = (data: ScreenFormData) => {
     AddMutation.mutate({
-      ScreenName: data.name,
-      ScreenType: data.type,
-      totalSeats: data.totalSeats,
+      ScreenName: data.screen_name,
+      ScreenType: data.screen_type,
+      totalSeats: data.total_seats,
     });
   };
 
   const updateScreen = (id: string, data: ScreenFormData) => {
     setScreens((prev) =>
       prev.map((screen) =>
-        screen.id === id ? { ...screen, ...data } : screen,
+        screen.screen_id === id ? { ...screen, ...data } : screen,
       ),
     );
   };
 
   const deleteScreen = (id: string) => {
-    setScreens((prev) => prev.filter((screen) => screen.id !== id));
+    setScreens((prev) => prev.filter((screen) => screen.screen_id !== id));
   };
 
-  const totalCapacity = screens.reduce(
-    (total, screen) => total + screen.totalSeats,
+  const totalCapacity = sc.reduce(
+    (total: number, sc: Screen) => total + sc.total_seats,
     0,
   );
 
@@ -67,7 +76,7 @@ export function useScreens() {
   ).length;
 
   return {
-    screens,
+    sc,
     addScreen,
     updateScreen,
     deleteScreen,

@@ -11,9 +11,10 @@ interface ScreenModalProps {
 }
 
 const defaultFormData: ScreenFormData = {
-  name: "",
-  type: "Dolby Atmos 2D",
-  totalSeats: 180,
+  screen_id: "",
+  screen_name: "",
+  screen_type: "Dolby Atmos 2D",
+  total_seats: 180,
   status: "Operational",
 };
 
@@ -21,14 +22,15 @@ function ScreenModal({ screen, onClose, onSave }: ScreenModalProps) {
   const [formData, setFormData] = useState<ScreenFormData>(() =>
     screen
       ? {
-          name: screen.name,
-          type: screen.type,
-          totalSeats: screen.totalSeats,
+          screen_id: screen.screen_id,
+          screen_name: screen.screen_name,
+          screen_type: screen.screen_type,
+          total_seats: screen.total_seats,
           status: screen.status,
         }
       : {
           ...defaultFormData,
-          name: "Audi",
+          screen_name: "Audi",
         },
   );
 

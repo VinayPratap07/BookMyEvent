@@ -1,8 +1,8 @@
 export interface Screen {
-  id: string;
-  name: string;
-  type: "IMAX 2D/3D" | "4DX" | "Dolby Atmos 2D" | "Standard Digital";
-  totalSeats: number;
+  screen_id: string;
+  screen_name: string;
+  screen_type: "IMAX 2D/3D" | "4DX" | "Dolby Atmos 2D" | "Standard Digital";
+  total_seats: number;
   status: "Operational" | "Maintenance";
 }
 

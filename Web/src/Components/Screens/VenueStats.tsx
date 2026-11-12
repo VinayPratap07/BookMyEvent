@@ -29,7 +29,7 @@ function VenueStats({
 
       <div className="p-5 rounded-2xl bg-[#161822] border border-purple-950/50">
         <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">
-          Cumulative Venue Capacity
+          Venue Capacity
         </span>
         <p className="text-3xl font-black text-white mt-2">
           {totalCapacity}{" "}

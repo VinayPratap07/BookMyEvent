@@ -13,12 +13,8 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
       <div>
         <div className="flex items-center justify-between pb-4 border-b border-[#23263b]">
           <div>
-            <span className="font-mono text-xs font-bold text-purple-400">
-              {screen.id}
-            </span>
-
             <h3 className="text-lg font-bold text-white tracking-wide mt-0.5">
-              {screen.name}
+              {screen.screen_name}
             </h3>
           </div>
 
@@ -46,16 +42,18 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
               <FiTv className="w-4 h-4 text-purple-400" />
               Projection
             </span>
-            <span className="font-semibold text-white">{screen.type}</span>
+            <span className="font-semibold text-white">
+              {screen.screen_type}
+            </span>
           </div>
 
-          <div className="flex items-center justify-between text-gray-300">
+          {/* <div className="flex items-center justify-between text-gray-300">
             <span className="flex items-center gap-2 text-gray-400 font-medium">
               <FiSpeaker className="w-4 h-4 text-purple-400" />
               Acoustics
             </span>
             <span className="font-semibold text-white">{screen.type}</span>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-between text-gray-300">
             <span className="flex items-center gap-2 text-gray-400 font-medium">
@@ -63,7 +61,7 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
               Total Capacity
             </span>
             <span className="font-semibold text-white">
-              {screen.totalSeats} Recliners & Seats
+              {screen.total_seats} Recliners & Seats
             </span>
           </div>
         </div>
@@ -81,7 +79,7 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
 
         <button
           type="button"
-          onClick={() => onDelete(screen.id)}
+          onClick={() => onDelete(screen.screen_id)}
           className="w-1/2 flex items-center justify-center gap-2 py-2 rounded-xl bg-red-950/20 border border-red-900/30 text-red-400 hover:bg-red-950/40 text-xs font-semibold transition-all"
         >
           <FiTrash2 className="w-3.5 h-3.5" />

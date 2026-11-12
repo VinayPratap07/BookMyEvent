@@ -14,7 +14,7 @@ import ScreenModal from "../../Components/Screens/ScreenModal";
 
 function ManageVenue() {
   const {
-    screens,
+    sc,
     addScreen,
     updateScreen,
     deleteScreen,
@@ -42,7 +42,7 @@ function ManageVenue() {
 
   const handleSaveScreen = (data: ScreenFormData) => {
     if (editingScreen) {
-      updateScreen(editingScreen.id, data);
+      updateScreen(editingScreen.screen_id, data);
     } else {
       addScreen(data);
     }
@@ -80,14 +80,14 @@ function ManageVenue() {
 
       {/* Statistics */}
       <VenueStats
-        totalScreens={screens.length}
+        totalScreens={sc.length}
         activeScreens={activeScreensCount}
         totalCapacity={totalCapacity}
       />
 
       {/* Screen Cards */}
       <ScreensGrid
-        screens={screens}
+        screens={sc}
         onEdit={openEditModal}
         onDelete={handleDeleteScreen}
       />
@@ -95,7 +95,7 @@ function ManageVenue() {
       {/* Add/Edit Modal */}
       {isModalOpen && (
         <ScreenModal
-          key={editingScreen?.id ?? "new-screen"}
+          key={editingScreen?.screen_id ?? "new-screen"}
           screen={editingScreen}
           onClose={closeModal}
           onSave={handleSaveScreen}

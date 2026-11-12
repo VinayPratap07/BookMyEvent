@@ -6,12 +6,14 @@ const {
   addEvent,
   createShow,
   setSeatPricingForShow,
+  getScreens,
 } = require("../Controller/Organiser.Controller");
 
 const routes = Router();
 
 routes.post("/listVenue", createVenue);
 routes.post("/addScreen", createScreen);
+routes.get("/screens", getScreens);
 routes.post("/addSeats", addSeatesInScreen);
 routes.post("/addEvent", addEvent);
 routes.post("/addShow", createShow);

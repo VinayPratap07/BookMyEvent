@@ -8,11 +8,12 @@ interface ScreensGridProps {
 }
 
 function ScreensGrid({ screens, onEdit, onDelete }: ScreensGridProps) {
+  console.log(screens);
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {screens.map((screen) => (
         <ScreensCard
-          key={screen.id}
+          key={screen.screen_id}
           screen={screen}
           onEdit={onEdit}
           onDelete={onDelete}

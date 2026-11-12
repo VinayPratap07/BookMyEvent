@@ -66,7 +66,21 @@ async function createScreen(req, res) {
   }
 }
 
-async function getScreens(req, res) {}
+async function getScreens(req, res) {
+  const { venueId } = req.user;
+
+  try {
+    const [screens] = await pool.query(
+      `SELECT  * FROM screens
+        WHERE venue_id_ref = ?`,
+      [venueId],
+    );
+
+    return res.status(200).json({ screens: screens });
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
+}
 
 async function addSeatesInScreen(req, res) {
   const { screen_id, rows } = req.body;
@@ -314,6 +328,7 @@ async function setSeatPricingForShow(req, res) {
 module.exports = {
   createVenue,
   createScreen,
+  getScreens,
   addSeatesInScreen,
   addEvent,
   createShow,

@@ -13,3 +13,9 @@ export const addScreens = async (data: {
 
   return res.data;
 };
+
+export const getScreens = async () => {
+  const res = await api.get("/screens", { withCredentials: true });
+
+  return res.data;
+};
