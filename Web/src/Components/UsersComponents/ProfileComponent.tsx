@@ -8,10 +8,11 @@ import {
   FiClock,
   FiEdit3,
 } from "react-icons/fi";
-import { getUserInfo } from "../API/UserApi";
-import LoadingScreen from "./Loading";
-import ErrorState from "./Error";
+
 import axios from "axios";
+import LoadingScreen from "../Loading";
+import { getUserInfo } from "../../API/UserApi";
+import ErrorState from "../Error";
 
 function ProfileComponent() {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import type { ApiShowSeat } from "../API/API_Response";
+import type { ApiShowSeat } from "../../Types/API_Response";
 
 interface SeatItemProps {
   seat: ApiShowSeat;

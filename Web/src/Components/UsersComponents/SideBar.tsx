@@ -9,9 +9,10 @@ import { HiOutlineReceiptTax } from "react-icons/hi";
 import { MdOutlineDevices, MdOutlineCreditCard } from "react-icons/md";
 import { FiGift } from "react-icons/fi";
 import { useMutation } from "@tanstack/react-query";
-import { logoutUser } from "../API/UserApi";
+
 import { useNavigate } from "react-router-dom";
-import LoadingScreen from "./Loading";
+import { logoutUser } from "../../API/UserApi";
+import LoadingScreen from "../Loading";
 
 interface NavItem {
   id: string;

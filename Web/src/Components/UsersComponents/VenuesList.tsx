@@ -1,6 +1,6 @@
 import { FiInfo } from "react-icons/fi";
-import type { ApiShow, ApiVenue } from "../API/API_Response";
 import { Link } from "react-router-dom";
+import type { ApiShow, ApiVenue } from "../../Types/API_Response";
 
 function VenuesList({ venue }: { venue: ApiVenue }) {
   const getStatusBorder = (status: ApiShow["status"] = "available") => {

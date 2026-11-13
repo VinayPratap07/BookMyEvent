@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import type { HomeShowProps } from "../API/API_Response";
+import type { HomeShowProps } from "../../Types/API_Response";
 
 function Card({ shows }: HomeShowProps) {
   const { event_id, event_name, event_image, genere } = shows;

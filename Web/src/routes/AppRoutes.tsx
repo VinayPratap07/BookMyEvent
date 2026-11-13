@@ -4,7 +4,6 @@ import { createBrowserRouter } from "react-router-dom";
 import HomePage from "../Pages/User/HomePage";
 import EventShowPage from "../Pages/User/ShowsPage";
 import AccountsPage from "../Pages/User/AccountsPage";
-import ProfileComponent from "../Components/ProfileComponent";
 import SeatPage from "../Pages/User/SeatsPage";
 import SummaryPage from "../Pages/User/SummaryPage";
 import SignupPage from "../Pages/User/SignupPage";
@@ -20,6 +19,7 @@ import AdminDashboard from "../Pages/Admin/DashboardPage";
 import ManageVenue from "../Pages/Admin/ManageVenuePage";
 import SeatAndPrice from "../Pages/Admin/Seats&PricePage";
 import ManageShows from "../Pages/Admin/ManageShowsPage";
+import ProfileComponent from "../Components/UsersComponents/ProfileComponent";
 
 const router = createBrowserRouter([
   //User Routes
