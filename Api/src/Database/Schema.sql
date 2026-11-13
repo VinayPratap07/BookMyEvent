@@ -55,7 +55,8 @@ CREATE TABLE IF NOT EXISTS events(
     released_at VARCHAR(25) NOT NULL,
     min_age int NOT NULL,
     genere VARCHAR(50),
-    language VARCHAR(50) NOT NULL
+    language VARCHAR(50) NOT NULL,
+    status VARCHAR(50) DEFAULT "Active"
 );
 
 -- Show table
