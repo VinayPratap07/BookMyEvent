@@ -27,8 +27,8 @@ const mainNavItems: AdminNavItem[] = [
   },
   {
     id: 2,
-    navLink: "manageShows",
-    label: "Manage Shows",
+    navLink: "manageEvents",
+    label: "Manage Events",
     icon: MdOutlineTheaters,
   },
   {

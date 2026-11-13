@@ -191,6 +191,8 @@ async function addEvent(req, res) {
     return res.status(422).json({ message: "All fields are required" });
   }
 
+  console.log("Reached here");
+
   try {
     await pool.query(
       `INSERT INTO  events(event_name, event_description, event_type, event_image, event_duration, released_at, min_age, genere, language)
@@ -212,6 +214,15 @@ async function addEvent(req, res) {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Failed to add event" });
+  }
+}
+
+async function getEvents(req, res) {
+  try {
+    const [events] = await pool.query(`SELECT * FROM events`);
+    return res.status(200).json(events);
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
   }
 }
 
@@ -333,4 +344,5 @@ module.exports = {
   addEvent,
   createShow,
   setSeatPricingForShow,
+  getEvents,
 };

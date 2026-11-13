@@ -19,3 +19,26 @@ export const getScreens = async () => {
 
   return res.data;
 };
+
+//Events API
+export const getEvents = async () => {
+  const res = await api.get("/events", { withCredentials: true });
+
+  return res.data;
+};
+
+export const addEvents = async (data: {
+  event_name: string;
+  event_description: string;
+  event_type: string;
+  event_imgLink: string;
+  event_duration: Number;
+  released_at: string;
+  min_age: Number;
+  genre: string;
+  language: string;
+}) => {
+  const res = await api.post("/events", data, { withCredentials: true });
+
+  return res.data;
+};
