@@ -1,4 +1,4 @@
-import type { ApiEvent } from "../../API/API_Response";
+import type { ApiEvent } from "../../Types/API_Response";
 
 function EventHeader({ event }: { event: ApiEvent }) {
   return (

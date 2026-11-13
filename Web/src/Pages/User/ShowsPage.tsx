@@ -3,7 +3,7 @@ import { getAllShows } from "../../API/ShowApi";
 import LoadingScreen from "../../Components/Loading";
 import ErrorState from "../../Components/Error";
 import { useParams } from "react-router-dom";
-import type { ShowsApiResponse } from "../../API/API_Response";
+import type { ShowsApiResponse } from "../../Types/API_Response";
 import DateFilter from "../../Components/UsersComponents/Date&Filter";
 
 import EventHeader from "../../Components/UsersComponents/EventHeader";

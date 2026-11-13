@@ -13,7 +13,7 @@ import { HiTicket } from "react-icons/hi2";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getBookingSummary, initiateBooking } from "../../API/BookingApi";
 import LoadingScreen from "../../Components/Loading";
-import type { BookingSummaryApiResponse } from "../../API/API_Response";
+import type { BookingSummaryApiResponse } from "../../Types/API_Response";
 
 function SummaryPage() {
   const [searchParams] = useSearchParams();

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { FiArrowLeft, FiCheck, FiInfo } from "react-icons/fi";
-import type { ApiShowSeat, SeatTierSection } from "../../API/API_Response";
+import type { ApiShowSeat, SeatTierSection } from "../../Types/API_Response";
 
 import { useQuery } from "@tanstack/react-query";
 import { getShowSeats } from "../../API/ShowApi";

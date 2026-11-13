@@ -4,7 +4,7 @@ import HeroSection from "../../Components/UsersComponents/Hero.Section";
 import { getAllEvents } from "../../API/ShowApi";
 import LoadingScreen from "../../Components/Loading";
 import ErrorState from "../../Components/Error";
-import type { Show } from "../../API/API_Response";
+import type { Show } from "../../Types/API_Response";
 import Card from "../../Components/UsersComponents/card";
 
 function HomePage() {
