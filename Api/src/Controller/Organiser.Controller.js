@@ -82,84 +82,215 @@ async function getScreens(req, res) {
   }
 }
 
-async function addSeatesInScreen(req, res) {
-  const { screen_id, rows } = req.body;
+async function saveScreenLayout(req, res) {
+  const { screen_id, row_count, column_count, target_capacity, seats } =
+    req.body;
 
-  if (!screen_id || !Array.isArray(rows) || rows.length === 0) {
+  if (
+    !screen_id ||
+    !Number.isInteger(row_count) ||
+    !Number.isInteger(column_count) ||
+    !Array.isArray(seats) ||
+    seats.length === 0
+  ) {
     return res.status(422).json({
-      message: "Screen ID and rows are required",
+      message: "Invalid layout data",
     });
   }
 
-  // Validate input
-  for (const row of rows) {
-    const { row_label, total_seats, seat_type } = row;
+  const validCellTypes = ["seat", "aisle", "gap"];
+  const validSeatTypes = ["standard", "premium", "vip"];
+
+  // Validate dimensions and positions
+  if (
+    row_count < 1 ||
+    row_count > 20 ||
+    column_count < 1 ||
+    column_count > 30 ||
+    seats.length !== row_count * column_count
+  ) {
+    return res.status(422).json({
+      message: "Invalid grid dimensions",
+    });
+  }
+
+  const positions = new Set();
+
+  for (const seat of seats) {
+    const { row_label, seat_number, cell_type, seat_type } = seat;
 
     if (
       typeof row_label !== "string" ||
       !row_label.trim() ||
-      row_label.trim().length > 5 ||
-      !Number.isInteger(total_seats) ||
-      total_seats <= 0 ||
-      total_seats > 500 ||
-      (seat_type != null &&
-        (typeof seat_type !== "string" || seat_type.length > 50))
+      row_label.length > 5 ||
+      !Number.isInteger(seat_number) ||
+      seat_number < 1 ||
+      seat_number > column_count ||
+      !validCellTypes.includes(cell_type)
     ) {
       return res.status(422).json({
-        message: "Invalid row label, seat count, or seat type",
+        message: "Invalid seat position",
       });
     }
-  }
 
-  // Prevent duplicate row labels in the same request
-  const labels = rows.map((row) => row.row_label.trim().toUpperCase());
-
-  if (new Set(labels).size !== labels.length) {
-    return res.status(422).json({
-      message: "Row labels must be unique",
-    });
-  }
-
-  try {
-    const values = [];
-
-    for (const row of rows) {
-      const row_label = row.row_label.trim();
-      const { total_seats, seat_type } = row;
-
-      for (let seat_number = 1; seat_number <= total_seats; seat_number++) {
-        values.push([screen_id, row_label, seat_number, seat_type ?? null]);
-      }
+    if (
+      (cell_type === "seat" && !validSeatTypes.includes(seat_type)) ||
+      (cell_type !== "seat" && seat_type !== null)
+    ) {
+      return res.status(422).json({
+        message: "Invalid seat type",
+      });
     }
 
-    await pool.query(
-      `INSERT INTO seats
-        (screen_id_ref, row_label, seat_number, seat_type)
-       VALUES ?`,
-      [values],
+    const position = `${row_label}:${seat_number}`;
+
+    if (positions.has(position)) {
+      return res.status(422).json({
+        message: "Duplicate seat position",
+      });
+    }
+
+    positions.add(position);
+  }
+
+  const actualSeats = seats.filter((seat) => seat.cell_type === "seat").length;
+
+  if (
+    !Number.isInteger(target_capacity) ||
+    target_capacity < 1 ||
+    actualSeats > target_capacity
+  ) {
+    return res.status(422).json({
+      message: "Invalid target capacity",
+    });
+  }
+
+  let connection;
+
+  try {
+    connection = await pool.getConnection();
+
+    await connection.beginTransaction();
+
+    // Verify screen exists
+    const [screens] = await connection.query(
+      `SELECT screen_id
+       FROM screens
+       WHERE screen_id = ?
+       FOR UPDATE`,
+      [screen_id],
     );
 
-    return res.status(201).json({
-      message: "Seats created successfully",
-      total_seats_added: values.length,
-    });
-  } catch (error) {
-    console.error(error);
+    if (screens.length === 0) {
+      await connection.rollback();
 
-    if (error.code === "ER_NO_REFERENCED_ROW_2") {
       return res.status(404).json({
         message: "Screen not found",
       });
     }
 
-    if (error.code === "ER_DUP_ENTRY") {
-      return res.status(409).json({
-        message: "Some seats already exist",
+    // Insert new layout
+    const values = seats.map((seat) => [
+      screen_id,
+      seat.row_label.trim(),
+      seat.seat_number,
+      seat.cell_type,
+      seat.seat_type,
+    ]);
+
+    await connection.query(
+      `INSERT INTO seats
+       (screen_id_ref, row_label, seat_number, cell_type, seat_type)
+       VALUES ?`,
+      [values],
+    );
+
+    // Update screen dimensions
+    await connection.query(
+      `UPDATE screens
+       SET total_rows = ?,
+           total_columns = ?,
+           total_seats = ?
+       WHERE screen_id = ?`,
+      [row_count, column_count, actualSeats, screen_id],
+    );
+
+    await connection.commit();
+
+    return res.status(200).json({
+      message: "Screen layout saved successfully",
+      total_seats: actualSeats,
+      total_rows: row_count,
+      total_columns: column_count,
+    });
+  } catch (error) {
+    if (connection) {
+      await connection.rollback();
+    }
+
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Failed to save screen layout",
+    });
+  } finally {
+    if (connection) {
+      connection.release();
+    }
+  }
+}
+
+async function getScreenLayout(req, res) {
+  try {
+    const { screenId } = req.params;
+
+    if (!screenId || isNaN(Number(screenId))) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid screen ID is required",
       });
     }
 
+    const [screenRows] = await pool.query(
+      `SELECT id, rows, columns, total_seats
+       FROM screens
+       WHERE id = ?`,
+      [screenId],
+    );
+
+    if (screenRows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Screen not found",
+      });
+    }
+
+    const screen = screenRows[0];
+
+    const [seats] = await pool.query(
+      `SELECT row_label, seat_number, cell_type, seat_type
+       FROM seats
+       WHERE screen_id = ?
+       ORDER BY row_label, seat_number`,
+      [screenId],
+    );
+
+    return res.status(200).json({
+      success: true,
+      layout: {
+        screen_id: screen.id,
+        row_count: screen.rows || 0,
+        column_count: screen.columns || 0,
+        target_capacity: screen.total_seats || 0,
+        seats: seats || [],
+      },
+    });
+  } catch (error) {
+    console.error("Get screen layout error:", error);
+
     return res.status(500).json({
-      message: "Failed to add seats",
+      success: false,
+      message: "Failed to fetch screen layout",
     });
   }
 }
@@ -340,9 +471,10 @@ module.exports = {
   createVenue,
   createScreen,
   getScreens,
-  addSeatesInScreen,
+  saveScreenLayout,
   addEvent,
   createShow,
   setSeatPricingForShow,
+  getScreenLayout,
   getEvents,
 };

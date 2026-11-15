@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { ScreenLayoutPayload } from "../Pages/Admin/ScreensLayout";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/api/organiser",
@@ -39,6 +40,22 @@ export const addEvents = async (data: {
   language: string;
 }) => {
   const res = await api.post("/events", data, { withCredentials: true });
+
+  return res.data;
+};
+
+export const uploadLayout = async (data: ScreenLayoutPayload) => {
+  const res = await axios.post("/layout", data, {
+    withCredentials: true,
+  });
+
+  return res.data;
+};
+
+export const getLayout = async (screenId: string) => {
+  const res = await axios.get(`/layout?screenId=${screenId}`, {
+    withCredentials: true,
+  });
 
   return res.data;
 };

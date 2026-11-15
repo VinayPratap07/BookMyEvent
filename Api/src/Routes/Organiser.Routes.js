@@ -2,12 +2,13 @@ const { Router } = require("express");
 const {
   createVenue,
   createScreen,
-  addSeatesInScreen,
+  saveScreenLayout,
   addEvent,
   createShow,
   setSeatPricingForShow,
   getScreens,
   getEvents,
+  getScreenLayout,
 } = require("../Controller/Organiser.Controller");
 
 const routes = Router();
@@ -15,7 +16,10 @@ const routes = Router();
 routes.post("/listVenue", createVenue);
 routes.post("/addScreen", createScreen);
 routes.get("/screens", getScreens);
-routes.post("/addSeats", addSeatesInScreen);
+
+//Layout API
+routes.post("/layout", saveScreenLayout);
+routes.get("/layout", getScreenLayout);
 
 //Events API
 routes.post("/events", addEvent);

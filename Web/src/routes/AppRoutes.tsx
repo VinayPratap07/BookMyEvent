@@ -17,7 +17,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminDashboard from "../Pages/Admin/DashboardPage";
 import ManageVenue from "../Pages/Admin/ManageVenuePage";
-import SeatAndPrice from "../Pages/Admin/Seats&PricePage";
+import ScreensLayout from "../Pages/Admin/ScreensLayout";
 import EventsPage from "../Pages/Admin/EventsPage";
 import ProfileComponent from "../Components/UsersComponents/ProfileComponent";
 
@@ -105,7 +105,7 @@ const router = createBrowserRouter([
           },
           {
             path: "seatingLayout",
-            element: <SeatAndPrice />,
+            element: <ScreensLayout />,
           },
           {
             path: "venue",

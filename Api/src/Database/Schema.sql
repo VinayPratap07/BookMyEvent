@@ -30,7 +30,9 @@ CREATE TABLE IF NOT EXISTS screens(
     screen_name VARCHAR(100) NOT NULL,
     screen_type VARCHAR(50) NOT NULL,
     venue_id_ref CHAR(36) NOT NULL,
-    total_seats INT,
+    total_seats INT DEFAULT 0,
+    total_rows INT NOT NULL DEFAULT 0,
+    total_columns INT NOT NULL DEFAULT 0,
     FOREIGN KEY (venue_id_ref) REFERENCES venue(venue_id)
 );
 
@@ -40,8 +42,12 @@ CREATE TABLE IF NOT EXISTS seats(
     screen_id_ref CHAR(36) NOT NULL,
     row_label VARCHAR(5) NOT NULL,
     seat_number INT NOT NULL,
+    cell_type ENUM('seat', 'aisle', 'gap') NOT NULL DEFAULT 'seat',
     seat_type VARCHAR(50),
-    FOREIGN KEY (screen_id_ref) REFERENCES screens(screen_id)
+    FOREIGN KEY (screen_id_ref) REFERENCES screens(screen_id),
+
+    UNIQUE KEY unique_screen_position
+        (screen_id_ref, row_label, seat_number)
 );
 
 -- Events table 
