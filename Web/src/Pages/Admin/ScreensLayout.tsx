@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
   FiSave,
@@ -89,10 +89,9 @@ const generateSeats = (rows: number, columns: number): Seat[] => {
 
   return generatedSeats;
 };
-
-export const ScreensLayout: React.FC = () => {
+function ScreensLayout() {
   // Screen configuration
-  const [selectedScreen, setSelectedScreen] = useState<number>(1);
+  const [selectedScreen] = useState<number>(1);
   const [targetCapacity, setTargetCapacity] = useState<number>(100);
 
   // Grid dimensions
@@ -310,25 +309,13 @@ export const ScreensLayout: React.FC = () => {
               Target Auditorium
             </label>
 
-            <select
-              value={selectedScreen}
-              onChange={(e) => setSelectedScreen(Number(e.target.value))}
-              className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2 text-white outline-none focus:border-purple-600 text-xs"
-            >
-              <option value={1}>Audi 1 (IMAX)</option>
-              <option value={2}>Audi 2 (Dolby Atmos)</option>
-              <option value={3}>Audi 3 (4DX)</option>
-            </select>
+            <span>Audi 1 (IMAX)</span>
           </div>
 
           {/* Target capacity */}
           <div>
             <div className="flex justify-between items-center text-xs mb-1">
               <span className="text-gray-400">Total Fixed Seats Limit</span>
-
-              <span className="font-bold text-white font-mono">
-                {targetCapacity}
-              </span>
             </div>
 
             <input
@@ -650,6 +637,6 @@ export const ScreensLayout: React.FC = () => {
       </div>
     </div>
   );
-};
+}
 
 export default ScreensLayout;
