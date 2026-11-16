@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { ScreenLayoutPayload } from "../Pages/Admin/ScreensLayout";
+import type { ScreenLayoutPayload } from "../Types/ScreenLayout_Type";
 
 const api = axios.create({
   baseURL: "http://localhost:3000/api/organiser",
