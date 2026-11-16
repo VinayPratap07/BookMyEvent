@@ -242,9 +242,10 @@ async function saveScreenLayout(req, res) {
 
 async function getScreenLayout(req, res) {
   try {
-    const { screenId } = req.params;
+    const { screenId } = req.query;
+    console.log(screenId);
 
-    if (!screenId || isNaN(Number(screenId))) {
+    if (!screenId) {
       return res.status(400).json({
         success: false,
         message: "Valid screen ID is required",
@@ -252,9 +253,9 @@ async function getScreenLayout(req, res) {
     }
 
     const [screenRows] = await pool.query(
-      `SELECT id, rows, columns, total_seats
+      `SELECT *
        FROM screens
-       WHERE id = ?`,
+       WHERE screen_id = ?`,
       [screenId],
     );
 
@@ -270,7 +271,7 @@ async function getScreenLayout(req, res) {
     const [seats] = await pool.query(
       `SELECT row_label, seat_number, cell_type, seat_type
        FROM seats
-       WHERE screen_id = ?
+       WHERE screen_id_ref = ?
        ORDER BY row_label, seat_number`,
       [screenId],
     );
@@ -279,11 +280,12 @@ async function getScreenLayout(req, res) {
       success: true,
       layout: {
         screen_id: screen.id,
-        row_count: screen.rows || 0,
-        column_count: screen.columns || 0,
+        row_count: screen.total_rows || 0,
+        column_count: screen.total_columns || 0,
         target_capacity: screen.total_seats || 0,
         seats: seats || [],
       },
+      screen,
     });
   } catch (error) {
     console.error("Get screen layout error:", error);

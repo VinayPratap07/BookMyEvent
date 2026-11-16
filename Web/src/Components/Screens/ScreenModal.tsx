@@ -65,7 +65,11 @@ function ScreenModal({ screen, onClose, onSave }: ScreenModalProps) {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <ScreenForm formData={formData} setFormData={setFormData} />
+          <ScreenForm
+            formData={formData}
+            setFormData={setFormData}
+            screenId={screen?.screen_id}
+          />
 
           <div className="pt-4 border-t border-[#23263b] flex items-center justify-end gap-3">
             <button

@@ -31,20 +31,14 @@ const mainNavItems: AdminNavItem[] = [
     label: "Manage Events",
     icon: MdOutlineTheaters,
   },
+  { id: 3, navLink: "venue", label: "Venue", icon: MdOutlinePlace },
   {
-    id: 3,
-    navLink: "seatingLayout",
-    label: "Seat & Price",
-    icon: MdOutlineAttachMoney,
-  },
-  { id: 4, navLink: "venue", label: "Venue", icon: MdOutlinePlace },
-  {
-    id: 5,
+    id: 4,
     navLink: "bookings",
     label: "Bookings",
     icon: MdOutlineConfirmationNumber,
   },
-  { id: 6, navLink: "settings", label: "Settings", icon: MdOutlineSettings },
+  { id: 5, navLink: "settings", label: "Settings", icon: MdOutlineSettings },
 ];
 
 function AdminSidebar() {

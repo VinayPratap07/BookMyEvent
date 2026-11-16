@@ -104,7 +104,7 @@ const router = createBrowserRouter([
             element: <EventsPage />,
           },
           {
-            path: "seatingLayout",
+            path: "screens/layout",
             element: <ScreensLayout />,
           },
           {

@@ -1,11 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import type { Screen, ScreenFormData } from "../../Types/screen";
 
 interface ScreenFormProps {
   formData: ScreenFormData;
   setFormData: React.Dispatch<React.SetStateAction<ScreenFormData>>;
+  screenId?: string;
 }
 
-function ScreenForm({ formData, setFormData }: ScreenFormProps) {
+function ScreenForm({ formData, setFormData, screenId }: ScreenFormProps) {
+  const navigate = useNavigate();
+
   const updateField = <K extends keyof ScreenFormData>(
     field: K,
     value: ScreenFormData[K],
@@ -14,6 +18,11 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleEditLayout = () => {
+    if (!screenId) return;
+    navigate(`/admin/screens/layout?screenId=${encodeURIComponent(screenId)}`);
   };
 
   return (
@@ -56,37 +65,32 @@ function ScreenForm({ formData, setFormData }: ScreenFormProps) {
           </select>
         </div>
 
-        {/* <div>
-          <label className="block text-gray-400 mb-1.5">
-            Audio Calibration
-          </label>
+        <div>
+          <label className="block text-gray-400 mb-1.5">Total Capacity</label>
 
-          <select
-            value={formData.sound}
-            onChange={(e) =>
-              updateField("sound", e.target.value as Screen["sound"])
-            }
+          <input
+            type="number"
+            min="20"
+            required
+            value={formData.total_seats}
+            onChange={(e) => updateField("total_seats", Number(e.target.value))}
             className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
+          />
+        </div>
+      </div>
+
+      {screenId && (
+        <div>
+          <label className="block text-gray-400 mb-1.5">Seating Layout</label>
+          <button
+            type="button"
+            onClick={handleEditLayout}
+            className="w-full bg-[#161822] hover:bg-[#1e2130] border border-[#23263b] hover:border-purple-600 rounded-xl px-4 py-2.5 text-purple-400 font-semibold transition-all text-xs flex items-center justify-center gap-2"
           >
-            <option value="Dolby Atmos">Dolby Atmos</option>
-            <option value="IMAX 12.0 Channel">IMAX 12.0 Channel</option>
-            <option value="7.1 Surround">7.1 Surround</option>
-          </select>
-        </div> */}
-      </div>
-
-      <div>
-        <label className="block text-gray-400 mb-1.5">Total Capacity</label>
-
-        <input
-          type="number"
-          min="20"
-          required
-          value={formData.total_seats}
-          onChange={(e) => updateField("total_seats", Number(e.target.value))}
-          className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
-        />
-      </div>
+            Edit Layout
+          </button>
+        </div>
+      )}
 
       <div>
         <label className="block text-gray-400 mb-1.5">Operational Status</label>

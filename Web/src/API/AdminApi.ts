@@ -44,8 +44,9 @@ export const addEvents = async (data: {
   return res.data;
 };
 
+//Layout API
 export const uploadLayout = async (data: ScreenLayoutPayload) => {
-  const res = await axios.post("/layout", data, {
+  const res = await api.post("/layout", data, {
     withCredentials: true,
   });
 
@@ -53,7 +54,7 @@ export const uploadLayout = async (data: ScreenLayoutPayload) => {
 };
 
 export const getLayout = async (screenId: string) => {
-  const res = await axios.get(`/layout?screenId=${screenId}`, {
+  const res = await api.get(`/layout?screenId=${screenId}`, {
     withCredentials: true,
   });
 
