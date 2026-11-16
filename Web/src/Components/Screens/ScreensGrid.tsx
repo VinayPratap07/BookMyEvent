@@ -1,4 +1,4 @@
-import type { Screen } from "../../Types/screen";
+import type { Screen } from "../../Types/screen_Type";
 import ScreensCard from "./ScreensCard";
 
 interface ScreensGridProps {

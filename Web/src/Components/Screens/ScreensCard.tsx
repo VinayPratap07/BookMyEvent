@@ -1,5 +1,5 @@
 import { FiEdit2, FiTrash2, FiTv, FiSpeaker, FiUsers } from "react-icons/fi";
-import type { Screen } from "../../Types/screen";
+import type { Screen } from "../../Types/screen_Type";
 
 interface ScreensCardProps {
   screen: Screen;

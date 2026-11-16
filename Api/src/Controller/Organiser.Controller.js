@@ -243,7 +243,6 @@ async function saveScreenLayout(req, res) {
 async function getScreenLayout(req, res) {
   try {
     const { screenId } = req.query;
-    console.log(screenId);
 
     if (!screenId) {
       return res.status(400).json({

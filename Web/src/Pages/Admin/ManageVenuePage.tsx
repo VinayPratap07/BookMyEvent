@@ -5,7 +5,7 @@ import { FiPlus } from "react-icons/fi";
 import { useScreens } from "../../Hooks/useScreens";
 
 //Type
-import type { Screen, ScreenFormData } from "../../Types/screen";
+import type { Screen, ScreenFormData } from "../../Types/screen_Type";
 
 //Components
 import VenueStats from "../../Components/Screens/VenueStats";

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiX, FiFilm, FiCheck } from "react-icons/fi";
-import type { Event, EventType } from "../../Types/Events";
+import type { Event, EventType } from "../../Types/Events_Type";
 
 type EventFormData = Omit<Event, "event_id">;
 

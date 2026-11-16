@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FiPlus } from "react-icons/fi";
-import type { Event } from "../../Types/Events";
+import type { Event } from "../../Types/Events_Type";
 import EventCard from "../../Components/Events/ShowCard";
 import EventFormModal from "../../Components/Events/ShowFormModal";
 import { useEvents } from "../../Hooks/useEvents";

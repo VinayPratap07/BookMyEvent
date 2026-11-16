@@ -5,7 +5,7 @@ import {
   FiClock,
   FiCalendar,
 } from "react-icons/fi";
-import type { Event } from "../../Types/Events";
+import type { Event } from "../../Types/Events_Type";
 // import { Event } from "./show.types";
 
 interface ShowCardProps {

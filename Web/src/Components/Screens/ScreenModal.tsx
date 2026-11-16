@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FiSliders, FiX, FiCheckCircle } from "react-icons/fi";
 
 import ScreenForm from "./ScreenForm";
-import type { Screen, ScreenFormData } from "../../Types/screen";
+import type { Screen, ScreenFormData } from "../../Types/screen_Type";
 
 interface ScreenModalProps {
   screen: Screen | null;

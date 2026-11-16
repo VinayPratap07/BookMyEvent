@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import type { Screen, ScreenFormData } from "../../Types/screen";
+import type { Screen, ScreenFormData } from "../../Types/screen_Type";
 
 interface ScreenFormProps {
   formData: ScreenFormData;

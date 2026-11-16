@@ -1,304 +1,46 @@
-import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  FiSave,
-  FiRotateCcw,
-  FiSliders,
-  FiCheck,
-  FiInfo,
-} from "react-icons/fi";
-import { MdEventSeat } from "react-icons/md";
 import { useSearchParams } from "react-router-dom";
-import { getLayout, uploadLayout } from "../../API/AdminApi";
+
 import LoadingScreen from "../../Components/Loading";
 import ErrorState from "../../Components/Error";
 
-// Types
-export type SeatType = "standard" | "premium" | "vip";
-export type CellType = "seat" | "aisle" | "gap";
-export type SeatTier = SeatType | "aisle" | "gap";
+import LayoutHeader from "../../Components/ScreensLayout/LayoutHeader";
+import VenueBounds from "../../Components/ScreensLayout/VenueBounds";
+import SeatCategories from "../../Components/ScreensLayout/SeatCategories";
+import LayoutMetrics from "../../Components/ScreensLayout/LayoutMetrics";
+import SeatingGrid from "../../Components/ScreensLayout/SeatingGrid";
 
-export interface Seat {
-  id: string;
-  row: string;
-  col: number;
-  tier: SeatTier;
-}
-
-export interface ApiSeat {
-  row_label: string;
-  seat_number: number;
-  cell_type: CellType;
-  seat_type: SeatType | null;
-}
-
-export interface ScreenLayoutPayload {
-  screen_id: number;
-  row_count: number;
-  column_count: number;
-  target_capacity: number;
-  seats: ApiSeat[];
-}
-
-const DEFAULT_ROWS = 8;
-const DEFAULT_COLS = 14;
-
-const tierConfigs: Record<SeatTier, { name: string; color: string }> = {
-  standard: {
-    name: "Standard Seat",
-    color: "bg-purple-950/60 text-purple-300 border-purple-800/40",
-  },
-  premium: {
-    name: "Premium Seat",
-    color: "bg-indigo-950/60 text-indigo-300 border-indigo-800/40",
-  },
-  vip: {
-    name: "VIP Seat",
-    color: "bg-amber-950/60 text-amber-300 border-amber-800/40",
-  },
-  aisle: {
-    name: "Walkway / Aisle",
-    color: "bg-transparent text-gray-500 border-dashed border-[#23263b]",
-  },
-  gap: {
-    name: "Empty Space",
-    color: "bg-transparent text-gray-600 border-dashed border-gray-700",
-  },
-};
-
-const generateDefaultSeats = (rows: number, columns: number): Seat[] => {
-  const generatedSeats: Seat[] = [];
-
-  for (let r = 0; r < rows; r++) {
-    const rowLetter = String.fromCharCode(65 + r);
-
-    for (let c = 1; c <= columns; c++) {
-      let tier: SeatTier = "standard";
-
-      if (c === 4 || c === 11) {
-        tier = "aisle";
-      } else if (r >= rows - 2) {
-        tier = "vip";
-      } else if (r >= 3) {
-        tier = "premium";
-      }
-
-      generatedSeats.push({
-        id: `${rowLetter}-${c}`,
-        row: rowLetter,
-        col: c,
-        tier,
-      });
-    }
-  }
-
-  return generatedSeats;
-};
-
-const mapApiSeatsToGrid = (
-  rows: number,
-  cols: number,
-  apiSeats: ApiSeat[],
-): Seat[] => {
-  const seatMap = new Map<string, SeatTier>();
-
-  for (const item of apiSeats) {
-    const tier: SeatTier =
-      item.cell_type === "aisle"
-        ? "aisle"
-        : item.cell_type === "gap"
-          ? "gap"
-          : (item.seat_type ?? "standard");
-
-    seatMap.set(`${item.row_label}-${item.seat_number}`, tier);
-  }
-
-  const mapped: Seat[] = [];
-  for (let r = 0; r < rows; r++) {
-    const rowLetter = String.fromCharCode(65 + r);
-    for (let c = 1; c <= cols; c++) {
-      const id = `${rowLetter}-${c}`;
-      mapped.push({
-        id,
-        row: rowLetter,
-        col: c,
-        tier: seatMap.get(id) ?? "standard",
-      });
-    }
-  }
-
-  return mapped;
-};
+import { useScreenLayout } from "../../Hooks/useScreenLayout";
 
 function ScreensLayout() {
   const [searchParams] = useSearchParams();
-  const queryClient = useQueryClient();
 
-  const screenIdParam = searchParams.get("screenId")?.trim() ?? "";
-  const numericScreenId = Number(screenIdParam);
+  const screenId = searchParams.get("screenId")?.trim() ?? "";
 
-  const [targetCapacity, setTargetCapacity] = useState<number>(100);
-  const [rowCount, setRowCount] = useState<number>(DEFAULT_ROWS);
-  const [colCount, setColCount] = useState<number>(DEFAULT_COLS);
-  const [seats, setSeats] = useState<Seat[]>(() =>
-    generateDefaultSeats(DEFAULT_ROWS, DEFAULT_COLS),
-  );
-  const [selectedTier, setSelectedTier] = useState<SeatTier>("standard");
-  const [isMouseDown, setIsMouseDown] = useState(false);
+  const {
+    data,
+    isLoading,
+    error,
+    isPending,
 
-  const { isLoading, error, data } = useQuery({
-    queryKey: ["CurrLayout", screenIdParam],
-    queryFn: () => getLayout(screenIdParam),
-    refetchOnWindowFocus: false,
-  });
-  console.log(data);
+    targetCapacity,
+    rowCount,
+    colCount,
+    seats,
+    selectedTier,
 
-  // Hydrate local editor state when backend layout arrives
+    rowLabels,
+    activeCount,
+    tierBreakdown,
+    isOverCapacity,
 
-  useEffect(() => {
-    const layout = data?.layout;
-    if (!layout) return;
+    setTargetCapacity,
+    setSelectedTier,
 
-    // Always use dimensions returned by the API
-    const rows = layout.row_count || DEFAULT_ROWS;
-    const cols = layout.column_count || DEFAULT_COLS;
-
-    setRowCount(rows);
-    setColCount(cols);
-    setTargetCapacity(layout.target_capacity ?? 100);
-
-    // If seats exist, map them from the API
-    if (Array.isArray(layout.seats) && layout.seats.length > 0) {
-      setSeats(mapApiSeatsToGrid(rows, cols, layout.seats));
-    } else {
-      // Otherwise, generate a default grid using API dimensions
-      setSeats(generateDefaultSeats(rows, cols));
-    }
-  }, [data]);
-
-  const rowLabels = useMemo(
-    () =>
-      Array.from({ length: rowCount }, (_, i) => String.fromCharCode(65 + i)),
-    [rowCount],
-  );
-
-  const { mutate: saveLayout, isPending } = useMutation({
-    mutationFn: uploadLayout,
-
-    onSuccess: (response) => {
-      queryClient.setQueryData(["CurrLayout", screenIdParam], response);
-
-      alert("Screen layout saved successfully");
-    },
-  });
-
-  const handleDimensionChange = (newRows: number, newCols: number) => {
-    if (
-      !Number.isInteger(newRows) ||
-      !Number.isInteger(newCols) ||
-      newRows < 1 ||
-      newRows > 20 ||
-      newCols < 1 ||
-      newCols > 30
-    ) {
-      return;
-    }
-
-    setRowCount(newRows);
-    setColCount(newCols);
-
-    setSeats((prev) => {
-      const existingSeats = new Map(
-        prev.map((seat) => [`${seat.row}-${seat.col}`, seat]),
-      );
-
-      const updatedSeats: Seat[] = [];
-
-      for (let r = 0; r < newRows; r++) {
-        const rowLetter = String.fromCharCode(65 + r);
-
-        for (let c = 1; c <= newCols; c++) {
-          const id = `${rowLetter}-${c}`;
-          updatedSeats.push(
-            existingSeats.get(id) || {
-              id,
-              row: rowLetter,
-              col: c,
-              tier: "standard",
-            },
-          );
-        }
-      }
-
-      return updatedSeats;
-    });
-  };
-
-  const handleReset = () => {
-    setRowCount(DEFAULT_ROWS);
-    setColCount(DEFAULT_COLS);
-    setSeats(generateDefaultSeats(DEFAULT_ROWS, DEFAULT_COLS));
-    setSelectedTier("standard");
-  };
-
-  const applyTierToSeat = (seatId: string) => {
-    setSeats((prev) =>
-      prev.map((seat) =>
-        seat.id === seatId ? { ...seat, tier: selectedTier } : seat,
-      ),
-    );
-  };
-
-  const activeCount = useMemo(
-    () =>
-      seats.filter((seat) => seat.tier !== "aisle" && seat.tier !== "gap")
-        .length,
-    [seats],
-  );
-
-  const tierBreakdown = useMemo(
-    () => ({
-      standard: seats.filter((seat) => seat.tier === "standard").length,
-      premium: seats.filter((seat) => seat.tier === "premium").length,
-      vip: seats.filter((seat) => seat.tier === "vip").length,
-      aisle: seats.filter((seat) => seat.tier === "aisle").length,
-      gap: seats.filter((seat) => seat.tier === "gap").length,
-    }),
-    [seats],
-  );
-
-  const isOverCapacity = activeCount > targetCapacity;
-
-  const handlePublishLayout = () => {
-    if (isOverCapacity) {
-      alert("Seat count exceeds target capacity");
-      return;
-    }
-
-    const payload: ScreenLayoutPayload = {
-      screen_id: numericScreenId,
-      row_count: rowCount,
-      column_count: colCount,
-      target_capacity: targetCapacity,
-      seats: seats.map((seat) => {
-        const cellType: CellType =
-          seat.tier === "aisle"
-            ? "aisle"
-            : seat.tier === "gap"
-              ? "gap"
-              : "seat";
-
-        return {
-          row_label: seat.row,
-          seat_number: seat.col,
-          cell_type: cellType,
-          seat_type: cellType === "seat" ? (seat.tier as SeatType) : null,
-        };
-      }),
-    };
-
-    saveLayout(payload);
-  };
+    handleDimensionChange,
+    handleReset,
+    applyTierToSeat,
+    handlePublishLayout,
+  } = useScreenLayout({ screenId });
 
   if (error) {
     return <ErrorState />;
@@ -309,348 +51,47 @@ function ScreensLayout() {
   }
 
   return (
-    <div
-      onMouseUp={() => setIsMouseDown(false)}
-      onMouseLeave={() => setIsMouseDown(false)}
-      className="w-full min-h-screen bg-[#0c0d12] text-gray-200 p-6 sm:p-8 font-sans space-y-8 select-none"
-    >
+    <div className="w-full min-h-screen bg-[#0c0d12] text-gray-200 p-6 sm:p-8 font-sans space-y-8 select-none">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-purple-950/40 gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-            Auditorium Seat Architect
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">
-            Customize seat categories, configure walkways, and manage your
-            auditorium layout.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleReset}
-            disabled={isPending}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-[#23263b] text-gray-300 hover:text-white hover:bg-[#161822] text-xs font-semibold transition-all disabled:opacity-50"
-          >
-            <FiRotateCcw className="w-4 h-4" />
-            <span>Reset Grid</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handlePublishLayout}
-            disabled={isPending || isOverCapacity}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold transition-all shadow-lg shadow-purple-950/50"
-          >
-            <FiSave className="w-4 h-4" />
-            <span>{isPending ? "Publishing..." : "Publish Layout"}</span>
-          </button>
-        </div>
-      </div>
+      <LayoutHeader
+        onReset={handleReset}
+        onPublish={handlePublishLayout}
+        isPending={isPending}
+        isOverCapacity={isOverCapacity}
+      />
 
       {/* Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Screen and Capacity */}
-        <div className="p-5 rounded-3xl bg-[#161822] border border-purple-950/50 space-y-4">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-purple-400 pb-2 border-b border-[#23263b]">
-            <FiSliders className="w-4 h-4" />
-            <span>Venue Bounds</span>
-          </div>
+        <VenueBounds
+          screenName={data?.screen?.screen_name || `Screen #${screenId}`}
+          targetCapacity={targetCapacity}
+          rowCount={rowCount}
+          colCount={colCount}
+          onCapacityChange={setTargetCapacity}
+          onDimensionChange={handleDimensionChange}
+        />
 
-          <div>
-            <span className="block text-xs text-gray-400 mb-1">
-              Target Auditorium
-            </span>
-            <span className="text-sm font-bold text-white">
-              {data?.screen?.screen_name || `Screen #${numericScreenId}`}
-            </span>
-          </div>
+        <div className="lg:col-span-3 space-y-6">
+          <SeatCategories
+            selectedTier={selectedTier}
+            onSelectTier={setSelectedTier}
+          />
 
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">
-              Total Fixed Seats Limit
-            </label>
-            <input
-              type="number"
-              min="1"
-              max="600"
-              value={targetCapacity}
-              onChange={(e) => {
-                const value = Number(e.target.value);
-                if (
-                  e.target.value !== "" &&
-                  Number.isInteger(value) &&
-                  value >= 1 &&
-                  value <= 600
-                ) {
-                  setTargetCapacity(value);
-                }
-              }}
-              className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2 text-white outline-none focus:border-purple-600 text-xs font-mono"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <div>
-              <label className="block text-[11px] text-gray-400 mb-1">
-                Grid Rows
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="20"
-                value={rowCount}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  if (e.target.value !== "" && Number.isInteger(value)) {
-                    handleDimensionChange(value, colCount);
-                  }
-                }}
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-1.5 text-white outline-none focus:border-purple-600 text-xs"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] text-gray-400 mb-1">
-                Grid Columns
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="30"
-                value={colCount}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  if (e.target.value !== "" && Number.isInteger(value)) {
-                    handleDimensionChange(rowCount, value);
-                  }
-                }}
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-1.5 text-white outline-none focus:border-purple-600 text-xs"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Seat Categories */}
-        <div className="lg:col-span-3 p-5 rounded-3xl bg-[#161822] border border-purple-950/50 space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-[#23263b] gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-              <MdEventSeat className="w-4 h-4" />
-              Select Seat Category
-            </span>
-            <span className="text-[11px] text-gray-400">
-              Click or drag over cells to paint
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-3">
-            {(["standard", "premium", "vip", "aisle", "gap"] as const).map(
-              (tierKey) => {
-                const cfg = tierConfigs[tierKey];
-                const isSelected = selectedTier === tierKey;
-
-                return (
-                  <button
-                    key={tierKey}
-                    type="button"
-                    onClick={() => setSelectedTier(tierKey)}
-                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between text-left ${
-                      isSelected
-                        ? "bg-purple-950/40 border-purple-500 shadow-md shadow-purple-950/80"
-                        : "bg-[#0c0d12] border-[#23263b] hover:border-purple-800/40"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <MdEventSeat
-                          className={`w-4 h-4 ${
-                            tierKey === "standard"
-                              ? "text-purple-400"
-                              : tierKey === "premium"
-                                ? "text-indigo-400"
-                                : tierKey === "vip"
-                                  ? "text-amber-400"
-                                  : "text-gray-500"
-                          }`}
-                        />
-                        {cfg.name}
-                      </span>
-                      {isSelected && (
-                        <FiCheck className="w-4 h-4 text-purple-400 shrink-0" />
-                      )}
-                    </div>
-                  </button>
-                );
-              },
-            )}
-          </div>
-
-          {/* Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div
-              className={`p-5 rounded-2xl border transition-all ${
-                isOverCapacity
-                  ? "bg-red-950/20 border-red-800/50 text-red-300"
-                  : "bg-[#0D0D12] border-purple-950/50 text-gray-200"
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                  Capacity Enforcement
-                </span>
-                <span
-                  className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                    isOverCapacity
-                      ? "bg-red-900/60 text-red-200"
-                      : "bg-purple-950 text-purple-400"
-                  }`}
-                >
-                  {isOverCapacity ? "Exceeded Target" : "Within Budget"}
-                </span>
-              </div>
-
-              <div className="mt-3 flex items-baseline gap-2">
-                <span className="text-3xl font-black font-mono">
-                  {activeCount}
-                </span>
-                <span className="text-xs text-gray-400 font-medium">
-                  / {targetCapacity} configured
-                </span>
-              </div>
-
-              {isOverCapacity && (
-                <p className="mt-2 text-xs text-red-400 flex items-center gap-1.5">
-                  <FiInfo className="w-3.5 h-3.5 shrink-0" />
-                  Remove {activeCount - targetCapacity} seats or convert them to
-                  aisles/gaps.
-                </p>
-              )}
-            </div>
-
-            <div className="p-5 rounded-2xl bg-[#0D0D12] border border-purple-950/50">
-              <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                Seat Count Distribution
-              </span>
-
-              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                <div className="p-2 rounded-xl bg-[#0c0d12] border border-purple-950/50">
-                  <span className="text-[10px] text-purple-400 font-bold block">
-                    Standard
-                  </span>
-                  <span className="text-base font-black text-white font-mono">
-                    {tierBreakdown.standard}
-                  </span>
-                </div>
-
-                <div className="p-2 rounded-xl bg-[#0c0d12] border border-purple-950/50">
-                  <span className="text-[10px] text-indigo-400 font-bold block">
-                    Premium
-                  </span>
-                  <span className="text-base font-black text-white font-mono">
-                    {tierBreakdown.premium}
-                  </span>
-                </div>
-
-                <div className="p-2 rounded-xl bg-[#0c0d12] border border-purple-950/50">
-                  <span className="text-[10px] text-amber-400 font-bold block">
-                    VIP
-                  </span>
-                  <span className="text-base font-black text-white font-mono">
-                    {tierBreakdown.vip}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-3 flex justify-between text-[10px] text-gray-500">
-                <span>Aisles: {tierBreakdown.aisle}</span>
-                <span>Gaps: {tierBreakdown.gap}</span>
-              </div>
-            </div>
-          </div>
+          <LayoutMetrics
+            activeCount={activeCount}
+            targetCapacity={targetCapacity}
+            isOverCapacity={isOverCapacity}
+            tierBreakdown={tierBreakdown}
+          />
         </div>
       </div>
 
       {/* Seating Grid */}
-      <div className="p-6 rounded-3xl bg-[#161822] border border-purple-950/50 flex flex-col items-center">
-        <div className="w-full max-w-2xl mb-12 flex flex-col items-center">
-          <div className="w-full h-3 bg-gradient-to-r from-transparent via-purple-500/80 to-transparent rounded-t-full shadow-[0_-10px_25px_rgba(168,85,247,0.4)]" />
-          <span className="text-[11px] uppercase tracking-widest text-gray-500 font-semibold mt-2">
-            All eyes this way • Screen
-          </span>
-        </div>
-
-        <div className="overflow-x-auto max-w-full pb-4">
-          <div className="inline-flex flex-col gap-2 min-w-fit px-4">
-            {rowLabels.map((rowLetter) => {
-              const rowSeats = seats.filter((seat) => seat.row === rowLetter);
-
-              return (
-                <div key={rowLetter} className="flex items-center gap-2">
-                  <span className="w-5 text-center font-mono text-xs font-bold text-gray-500">
-                    {rowLetter}
-                  </span>
-
-                  <div className="flex items-center gap-1.5">
-                    {rowSeats.map((seat) => {
-                      const cfg = tierConfigs[seat.tier];
-                      const isEmpty =
-                        seat.tier === "aisle" || seat.tier === "gap";
-
-                      return (
-                        <button
-                          key={seat.id}
-                          type="button"
-                          onMouseDown={() => {
-                            setIsMouseDown(true);
-                            applyTierToSeat(seat.id);
-                          }}
-                          onMouseEnter={() => {
-                            if (isMouseDown) {
-                              applyTierToSeat(seat.id);
-                            }
-                          }}
-                          onTouchStart={() => applyTierToSeat(seat.id)}
-                          className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold transition-all border ${
-                            cfg.color
-                          } ${
-                            isEmpty
-                              ? "border-dashed hover:border-purple-400"
-                              : "hover:scale-105 active:scale-95 shadow-sm"
-                          }`}
-                          title={`${seat.id} - ${cfg.name}`}
-                        >
-                          {!isEmpty ? seat.col : ""}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <span className="w-5 text-center font-mono text-xs font-bold text-gray-500">
-                    {rowLetter}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Legend */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-6 pt-6 border-t border-[#23263b] w-full text-xs">
-          {(["standard", "premium", "vip", "aisle", "gap"] as const).map(
-            (tierKey) => (
-              <div key={tierKey} className="flex items-center gap-2">
-                <span
-                  className={`w-4 h-4 rounded border ${tierConfigs[tierKey].color}`}
-                />
-                <span className="text-gray-400">
-                  {tierConfigs[tierKey].name}
-                </span>
-              </div>
-            ),
-          )}
-        </div>
-      </div>
+      <SeatingGrid
+        seats={seats}
+        rowLabels={rowLabels}
+        onApplyTier={applyTierToSeat}
+      />
     </div>
   );
 }
