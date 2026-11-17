@@ -55,10 +55,17 @@ export function useScreens() {
   });
 
   const addScreen = (data: ScreenFormData) => {
+    if (data.total_rows * data.total_columns !== data.total_seats) {
+      console.log("data");
+      return;
+    }
+
     AddMutation.mutate({
       ScreenName: data.screen_name,
       ScreenType: data.screen_type,
       totalSeats: data.total_seats,
+      totalRows: data.total_rows,
+      totalColumns: data.total_columns,
     });
   };
 

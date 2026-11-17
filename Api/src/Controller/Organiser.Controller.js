@@ -34,18 +34,20 @@ async function createVenue(req, res) {
 }
 
 async function createScreen(req, res) {
-  const { ScreenName, ScreenType, totalSeats } = req.body;
+  const { ScreenName, ScreenType, totalSeats, totalRows, totalColumns } =
+    req.body;
   const venue_id = req.user.venueId;
+  console.log(totalColumns);
 
-  if (!ScreenName || !venue_id || !totalSeats) {
+  if (!ScreenName || !venue_id || !totalSeats || !totalRows || !totalColumns) {
     return res.status(422).json({ message: "All fields are required" });
   }
 
   try {
     await pool.query(
-      `INSERT INTO screens(screen_name, screen_type, venue_id_ref, total_seats)
-            VALUES(?,?,?,?)`,
-      [ScreenName, ScreenType, venue_id, totalSeats],
+      `INSERT INTO screens(screen_name, screen_type, venue_id_ref, total_seats, total_rows, total_columns)
+            VALUES(?,?,?,?,?,?)`,
+      [ScreenName, ScreenType, venue_id, totalSeats, totalRows, totalColumns],
     );
 
     return res.status(201).json({

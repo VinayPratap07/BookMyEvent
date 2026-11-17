@@ -16,6 +16,8 @@ const defaultFormData: ScreenFormData = {
   screen_type: "Dolby Atmos 2D",
   total_seats: 180,
   status: "Operational",
+  total_rows: 10,
+  total_columns: 18,
 };
 
 function ScreenModal({ screen, onClose, onSave }: ScreenModalProps) {
@@ -27,6 +29,8 @@ function ScreenModal({ screen, onClose, onSave }: ScreenModalProps) {
           screen_type: screen.screen_type,
           total_seats: screen.total_seats,
           status: screen.status,
+          total_columns: screen.total_columns,
+          total_rows: screen.total_rows,
         }
       : {
           ...defaultFormData,

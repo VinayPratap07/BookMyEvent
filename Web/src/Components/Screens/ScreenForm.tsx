@@ -25,6 +25,11 @@ function ScreenForm({ formData, setFormData, screenId }: ScreenFormProps) {
     navigate(`/admin/screens/layout?screenId=${encodeURIComponent(screenId)}`);
   };
 
+  const isSeatCountValid =
+    formData.total_rows > 0 &&
+    formData.total_columns > 0 &&
+    formData.total_rows * formData.total_columns === formData.total_seats;
+
   return (
     <div className="space-y-4 text-xs font-medium">
       <div>
@@ -77,7 +82,40 @@ function ScreenForm({ formData, setFormData, screenId }: ScreenFormProps) {
             className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
           />
         </div>
+
+        {/* Rows and Columns */}
+        <div>
+          <label className="block text-gray-400 mb-1.5">Total Columns</label>
+
+          <input
+            type="number"
+            required
+            value={formData.total_columns}
+            onChange={(e) =>
+              updateField("total_columns", Number(e.target.value))
+            }
+            className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
+          />
+        </div>
+        <div>
+          <label className="block text-gray-400 mb-1.5">Total Rows</label>
+
+          <input
+            type="number"
+            required
+            value={formData.total_rows}
+            onChange={(e) => updateField("total_rows", Number(e.target.value))}
+            className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600 text-xs"
+          />
+        </div>
       </div>
+      {!isSeatCountValid && (
+        <p className="text-red-400 text-xs mt-2">
+          Rows × Columns must equal Total Capacity (
+          {formData.total_rows * formData.total_columns} /{" "}
+          {formData.total_seats})
+        </p>
+      )}
 
       {screenId && (
         <div>

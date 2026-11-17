@@ -64,6 +64,25 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
               {screen.total_seats} Recliners & Seats
             </span>
           </div>
+
+          <div className="flex items-center justify-between text-gray-300">
+            <span className="flex items-center gap-2 text-gray-400 font-medium">
+              <FiUsers className="w-4 h-4 text-purple-400" />
+              Total Rows
+            </span>
+            <span className="font-semibold text-white">
+              {screen.total_rows}
+            </span>
+          </div>
+          <div className="flex items-center justify-between text-gray-300">
+            <span className="flex items-center gap-2 text-gray-400 font-medium">
+              <FiUsers className="w-4 h-4 text-purple-400" />
+              Total Columns
+            </span>
+            <span className="font-semibold text-white">
+              {screen.total_columns}
+            </span>
+          </div>
         </div>
       </div>
 

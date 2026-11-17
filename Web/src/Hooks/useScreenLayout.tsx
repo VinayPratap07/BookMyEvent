@@ -42,7 +42,7 @@ export function useScreenLayout({ screenId }: UseScreenLayoutProps) {
     enabled: Boolean(screenId),
     refetchOnWindowFocus: false,
   });
-
+  console.log(data);
   // Hydrate editor state
   useEffect(() => {
     const layout = data?.layout;

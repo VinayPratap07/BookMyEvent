@@ -9,6 +9,8 @@ export const addScreens = async (data: {
   ScreenName: string;
   ScreenType: string;
   totalSeats: Number;
+  totalRows: Number;
+  totalColumns: Number;
 }) => {
   const res = await api.post("/addScreen", data, { withCredentials: true });
 
