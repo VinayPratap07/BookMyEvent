@@ -96,4 +96,36 @@ async function saveScreenLayoutService(layoutData) {
   }
 }
 
-module.exports = { getSeats, lockSeats, saveScreenLayoutService };
+async function getScreenLayoutService(screenId) {
+  const [screenRows] = await pool.query(
+    `SELECT *
+     FROM screens
+     WHERE screen_id = ?`,
+    [screenId],
+  );
+
+  if (screenRows.length === 0) {
+    const error = new Error("Screen not found");
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const screen = screenRows[0];
+
+  const [seats] = await pool.query(
+    `SELECT row_label, seat_number, cell_type, seat_type
+     FROM seats
+     WHERE screen_id_ref = ?
+     ORDER BY row_label, seat_number`,
+    [screenId],
+  );
+
+  return { screen, seats };
+}
+
+module.exports = {
+  getSeats,
+  lockSeats,
+  saveScreenLayoutService,
+  getScreenLayoutService,
+};

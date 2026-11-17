@@ -1,5 +1,8 @@
 const { pool } = require("../Database/Connection");
-const { saveScreenLayoutService } = require("../Service/Seat.Service");
+const {
+  saveScreenLayoutService,
+  getScreenLayoutService,
+} = require("../Service/Seat.Service");
 
 async function createVenue(req, res) {
   const { venue_name, venue_address, maps_link } = req.body;
@@ -109,39 +112,16 @@ async function saveScreenLayout(req, res) {
 }
 
 async function getScreenLayout(req, res) {
+  const { screenId } = req.query;
+
+  if (!screenId) {
+    return res.status(400).json({
+      success: false,
+      message: "Valid screen ID is required",
+    });
+  }
   try {
-    const { screenId } = req.query;
-
-    if (!screenId) {
-      return res.status(400).json({
-        success: false,
-        message: "Valid screen ID is required",
-      });
-    }
-
-    const [screenRows] = await pool.query(
-      `SELECT *
-       FROM screens
-       WHERE screen_id = ?`,
-      [screenId],
-    );
-
-    if (screenRows.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Screen not found",
-      });
-    }
-
-    const screen = screenRows[0];
-
-    const [seats] = await pool.query(
-      `SELECT row_label, seat_number, cell_type, seat_type
-       FROM seats
-       WHERE screen_id_ref = ?
-       ORDER BY row_label, seat_number`,
-      [screenId],
-    );
+    const { screen, seats } = await getScreenLayoutService(screenId);
 
     return res.status(200).json({
       success: true,
