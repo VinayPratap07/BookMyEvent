@@ -1,4 +1,12 @@
-import { FiEdit2, FiTrash2, FiTv, FiSpeaker, FiUsers } from "react-icons/fi";
+import {
+  FiEdit2,
+  FiTrash2,
+  FiTv,
+  FiSpeaker,
+  FiUsers,
+  FiColumns,
+  FiAlignJustify,
+} from "react-icons/fi";
 import type { Screen } from "../../Types/screen_Type";
 
 interface ScreensCardProps {
@@ -67,7 +75,7 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
 
           <div className="flex items-center justify-between text-gray-300">
             <span className="flex items-center gap-2 text-gray-400 font-medium">
-              <FiUsers className="w-4 h-4 text-purple-400" />
+              <FiAlignJustify className="w-4 h-4 text-purple-400" />
               Total Rows
             </span>
             <span className="font-semibold text-white">
@@ -76,7 +84,7 @@ function ScreensCard({ screen, onEdit, onDelete }: ScreensCardProps) {
           </div>
           <div className="flex items-center justify-between text-gray-300">
             <span className="flex items-center gap-2 text-gray-400 font-medium">
-              <FiUsers className="w-4 h-4 text-purple-400" />
+              <FiColumns className="w-4 h-4 text-purple-400" />
               Total Columns
             </span>
             <span className="font-semibold text-white">

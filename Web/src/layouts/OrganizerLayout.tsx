@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import AdminSideBar from "../Components/AdminSideBar";
+import AdminSideBar from "../Components/OrganizerSideBar";
 
-function AdminLayout() {
+function OrganizerLayout() {
   return (
     <div className="bg-[#0c0d12] h-screen w-full flex overflow-hidden">
       {/* Sidebar container: pinned height, no shrink */}
@@ -17,4 +17,4 @@ function AdminLayout() {
   );
 }
 
-export default AdminLayout;
+export default OrganizerLayout;

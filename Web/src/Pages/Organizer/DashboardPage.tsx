@@ -134,7 +134,7 @@ const showsOverview = [
   },
 ];
 
-export const AdminDashboard: React.FC = () => {
+export const OrganizerDashboard: React.FC = () => {
   const [timeframe, setTimeframe] = useState<"daily" | "weekly" | "monthly">(
     "weekly",
   );
@@ -525,4 +525,4 @@ export const AdminDashboard: React.FC = () => {
   );
 };
 
-export default AdminDashboard;
+export default OrganizerDashboard;

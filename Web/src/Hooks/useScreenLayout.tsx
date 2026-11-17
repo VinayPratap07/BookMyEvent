@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { getLayout, uploadLayout } from "../API/AdminApi";
+import { getLayout, uploadLayout } from "../API/OrganizerApi";
 
 import type {
   CellType,

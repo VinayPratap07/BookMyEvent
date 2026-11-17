@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { Screen, ScreenFormData } from "../../Types/screen_Type";
+import { FiInfo } from "react-icons/fi";
 
 interface ScreenFormProps {
   formData: ScreenFormData;
@@ -71,7 +72,22 @@ function ScreenForm({ formData, setFormData, screenId }: ScreenFormProps) {
         </div>
 
         <div>
-          <label className="block text-gray-400 mb-1.5">Total Capacity</label>
+          <div className="flex items-center gap-2 mb-1.5">
+            <label className="text-gray-400">Total Capacity</label>
+
+            <div className="relative group">
+              <FiInfo className="w-3.5 h-3.5 text-gray-500 cursor-help" />
+
+              <span
+                className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2
+        hidden group-hover:block w-48 p-2 text-xs text-white
+        bg-gray-800 rounded-lg shadow-lg z-10"
+              >
+                Count each aisle as one empty seat when calculating total
+                capacity
+              </span>
+            </div>
+          </div>
 
           <input
             type="number"

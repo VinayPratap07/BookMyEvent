@@ -11,14 +11,14 @@ import {
 import { FiChevronRight } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
-interface AdminNavItem {
+interface OrganizerNavItem {
   id: Number;
   navLink: string;
   label: string;
   icon: React.ElementType;
 }
 
-const mainNavItems: AdminNavItem[] = [
+const mainNavItems: OrganizerNavItem[] = [
   {
     id: 1,
     navLink: "dashboard",
@@ -41,7 +41,7 @@ const mainNavItems: AdminNavItem[] = [
   { id: 5, navLink: "settings", label: "Settings", icon: MdOutlineSettings },
 ];
 
-function AdminSidebar() {
+function OrganizerSidebar() {
   const [activeTab, setActiveTab] = useState<Number>(1);
   const navigate = useNavigate();
 
@@ -66,7 +66,7 @@ function AdminSidebar() {
           </div>
           <div>
             <h2 className="text-base font-bold text-white tracking-wide leading-tight">
-              Admin Portal
+              Organizer Portal
             </h2>
             <span className="text-xs text-purple-400 font-medium">
               Management Suite
@@ -132,4 +132,4 @@ function AdminSidebar() {
   );
 }
 
-export default AdminSidebar;
+export default OrganizerSidebar;

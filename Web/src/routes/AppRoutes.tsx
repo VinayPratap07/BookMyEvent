@@ -13,12 +13,12 @@ import RedirectPage from "../Pages/User/RedirectPage";
 
 //Layouts and Protected routes
 import UserLayout from "../layouts/UserLayout";
-import AdminLayout from "../layouts/AdminLayout";
+import OrganizerLayout from "../layouts/OrganizerLayout";
 import ProtectedRoute from "./ProtectedRoute";
-import AdminDashboard from "../Pages/Admin/DashboardPage";
-import ManageVenue from "../Pages/Admin/ManageVenuePage";
-import ScreensLayout from "../Pages/Admin/ScreensLayout";
-import EventsPage from "../Pages/Admin/EventsPage";
+import OrganizerDashboard from "../Pages/Organizer/DashboardPage";
+import ManageVenue from "../Pages/Organizer/ManageVenuePage";
+import ScreensLayout from "../Pages/Organizer/ScreensLayout";
+import EventsPage from "../Pages/Organizer/EventsPage";
 import ProfileComponent from "../Components/UsersComponents/ProfileComponent";
 
 const router = createBrowserRouter([
@@ -87,17 +87,17 @@ const router = createBrowserRouter([
     element: <PaymentSuccess />,
   },
 
-  //Protected Admin Routes
+  //Protected Organizer  Routes
   {
     // element: <ProtectedRoute allowedRoles={["admin"]} />,
     children: [
       {
-        path: "/admin",
-        element: <AdminLayout />,
+        path: "/organizer",
+        element: <OrganizerLayout />,
         children: [
           {
             path: "dashboard",
-            element: <AdminDashboard />,
+            element: <OrganizerDashboard />,
           },
           {
             path: "manageEvents",

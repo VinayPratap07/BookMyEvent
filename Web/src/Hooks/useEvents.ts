@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addEvents, getEvents } from "../API/AdminApi";
+import { addEvents, getEvents } from "../API/OrganizerApi";
 import type { Event } from "../Types/Events_Type";
 
 type CreateEventData = Omit<Event, "event_id">;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { Screen, ScreenFormData } from "../Types/screen_Type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { addScreens, getScreens } from "../API/AdminApi";
+import { addScreens, getScreens } from "../API/OrganizerApi";
 
 const initialScreens: Screen[] = [
   {

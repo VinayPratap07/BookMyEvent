@@ -39,8 +39,7 @@ function VenueBounds({
 
         <input
           type="number"
-          min="1"
-          max="600"
+          min="20"
           value={targetCapacity}
           onChange={(e) => {
             const value = Number(e.target.value);
@@ -66,8 +65,7 @@ function VenueBounds({
 
           <input
             type="number"
-            min="1"
-            max="20"
+            min="5"
             value={rowCount}
             onChange={(e) => {
               const value = Number(e.target.value);
@@ -87,8 +85,7 @@ function VenueBounds({
 
           <input
             type="number"
-            min="1"
-            max="30"
+            min="4"
             value={colCount}
             onChange={(e) => {
               const value = Number(e.target.value);

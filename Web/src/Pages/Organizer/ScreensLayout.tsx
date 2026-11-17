@@ -63,7 +63,7 @@ function ScreensLayout() {
       {/* Controls */}
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <VenueBounds
-          screenName={data?.screen?.screen_name || `Screen #${screenId}`}
+          screenName={data?.screen?.screen_name}
           targetCapacity={targetCapacity}
           rowCount={rowCount}
           colCount={colCount}
