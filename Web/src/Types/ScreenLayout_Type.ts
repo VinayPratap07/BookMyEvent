@@ -18,7 +18,7 @@ export interface ApiSeat {
 }
 
 export interface ScreenLayoutPayload {
-  screen_id: number;
+  screen_id: string;
   row_count: number;
   column_count: number;
   target_capacity: number;

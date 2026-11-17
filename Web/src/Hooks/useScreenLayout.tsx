@@ -22,7 +22,7 @@ interface UseScreenLayoutProps {
 export function useScreenLayout({ screenId }: UseScreenLayoutProps) {
   const queryClient = useQueryClient();
 
-  const numericScreenId = Number(screenId);
+  const numericScreenId = screenId;
 
   // Editor state
   const [targetCapacity, setTargetCapacity] = useState(100);
@@ -172,15 +172,6 @@ export function useScreenLayout({ screenId }: UseScreenLayoutProps) {
 
   // Publish layout
   const handlePublishLayout = () => {
-    if (
-      !screenId ||
-      !Number.isInteger(numericScreenId) ||
-      numericScreenId <= 0
-    ) {
-      alert("Invalid screen ID");
-      return;
-    }
-
     if (isOverCapacity) {
       alert("Seat count exceeds target capacity");
       return;
