@@ -10,6 +10,7 @@ const {
   getEvents,
   getScreenLayout,
 } = require("../Controller/Organiser.Controller");
+const { validateScreenLayout } = require("../Middleware/validateScreenLayout");
 
 const routes = Router();
 
@@ -18,7 +19,7 @@ routes.post("/addScreen", createScreen);
 routes.get("/screens", getScreens);
 
 //Layout API
-routes.post("/layout", saveScreenLayout);
+routes.post("/layout", validateScreenLayout, saveScreenLayout);
 routes.get("/layout", getScreenLayout);
 
 //Events API

@@ -23,7 +23,9 @@ function ScreenForm({ formData, setFormData, screenId }: ScreenFormProps) {
 
   const handleEditLayout = () => {
     if (!screenId) return;
-    navigate(`/admin/screens/layout?screenId=${encodeURIComponent(screenId)}`);
+    navigate(
+      `/organizer/screens/layout?screenId=${encodeURIComponent(screenId)}`,
+    );
   };
 
   const isSeatCountValid =

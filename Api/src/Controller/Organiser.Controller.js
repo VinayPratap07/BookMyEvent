@@ -1,4 +1,5 @@
 const { pool } = require("../Database/Connection");
+const { saveScreenLayoutService } = require("../Service/Seat.Service");
 
 async function createVenue(req, res) {
   const { venue_name, venue_address, maps_link } = req.body;
@@ -37,10 +38,13 @@ async function createScreen(req, res) {
   const { ScreenName, ScreenType, totalSeats, totalRows, totalColumns } =
     req.body;
   const venue_id = req.user.venueId;
-  console.log(totalColumns);
 
   if (!ScreenName || !venue_id || !totalSeats || !totalRows || !totalColumns) {
     return res.status(422).json({ message: "All fields are required" });
+  }
+
+  if (totalColumns * totalRows !== totalSeats) {
+    return res.status(400).json({ message: "Invalid layout count" });
   }
 
   try {
@@ -85,160 +89,22 @@ async function getScreens(req, res) {
 }
 
 async function saveScreenLayout(req, res) {
-  const { screen_id, row_count, column_count, target_capacity, seats } =
-    req.body;
-
-  if (
-    !screen_id ||
-    !Number.isInteger(row_count) ||
-    !Number.isInteger(column_count) ||
-    !Array.isArray(seats) ||
-    seats.length === 0
-  ) {
-    return res.status(422).json({
-      message: "Invalid layout data",
-    });
-  }
-
-  const validCellTypes = ["seat", "aisle", "gap"];
-  const validSeatTypes = ["standard", "premium", "vip"];
-
-  // Validate dimensions and positions
-  if (
-    row_count < 1 ||
-    row_count > 20 ||
-    column_count < 1 ||
-    column_count > 30 ||
-    seats.length !== row_count * column_count
-  ) {
-    return res.status(422).json({
-      message: "Invalid grid dimensions",
-    });
-  }
-
-  const positions = new Set();
-
-  for (const seat of seats) {
-    const { row_label, seat_number, cell_type, seat_type } = seat;
-
-    if (
-      typeof row_label !== "string" ||
-      !row_label.trim() ||
-      row_label.length > 5 ||
-      !Number.isInteger(seat_number) ||
-      seat_number < 1 ||
-      seat_number > column_count ||
-      !validCellTypes.includes(cell_type)
-    ) {
-      return res.status(422).json({
-        message: "Invalid seat position",
-      });
-    }
-
-    if (
-      (cell_type === "seat" && !validSeatTypes.includes(seat_type)) ||
-      (cell_type !== "seat" && seat_type !== null)
-    ) {
-      return res.status(422).json({
-        message: "Invalid seat type",
-      });
-    }
-
-    const position = `${row_label}:${seat_number}`;
-
-    if (positions.has(position)) {
-      return res.status(422).json({
-        message: "Duplicate seat position",
-      });
-    }
-
-    positions.add(position);
-  }
-
-  const actualSeats = seats.filter((seat) => seat.cell_type === "seat").length;
-
-  if (
-    !Number.isInteger(target_capacity) ||
-    target_capacity < 1 ||
-    actualSeats > target_capacity
-  ) {
-    return res.status(422).json({
-      message: "Invalid target capacity",
-    });
-  }
-
-  let connection;
-
   try {
-    connection = await pool.getConnection();
-
-    await connection.beginTransaction();
-
-    // Verify screen exists
-    const [screens] = await connection.query(
-      `SELECT screen_id
-       FROM screens
-       WHERE screen_id = ?
-       FOR UPDATE`,
-      [screen_id],
-    );
-
-    if (screens.length === 0) {
-      await connection.rollback();
-
-      return res.status(404).json({
-        message: "Screen not found",
-      });
-    }
-
-    // Insert new layout
-    const values = seats.map((seat) => [
-      screen_id,
-      seat.row_label.trim(),
-      seat.seat_number,
-      seat.cell_type,
-      seat.seat_type,
-    ]);
-
-    await connection.query(
-      `INSERT INTO seats
-       (screen_id_ref, row_label, seat_number, cell_type, seat_type)
-       VALUES ?`,
-      [values],
-    );
-
-    // Update screen dimensions
-    await connection.query(
-      `UPDATE screens
-       SET total_rows = ?,
-           total_columns = ?,
-           total_seats = ?
-       WHERE screen_id = ?`,
-      [row_count, column_count, actualSeats, screen_id],
-    );
-
-    await connection.commit();
+    const result = await saveScreenLayoutService(req.layoutData);
 
     return res.status(200).json({
       message: "Screen layout saved successfully",
-      total_seats: actualSeats,
-      total_rows: row_count,
-      total_columns: column_count,
+      ...result,
     });
   } catch (error) {
-    if (connection) {
-      await connection.rollback();
-    }
-
     console.error(error);
 
-    return res.status(500).json({
-      message: "Failed to save screen layout",
+    return res.status(error.statusCode || 500).json({
+      message:
+        error.statusCode === 404
+          ? error.message
+          : "Failed to save screen layout",
     });
-  } finally {
-    if (connection) {
-      connection.release();
-    }
   }
 }
 
