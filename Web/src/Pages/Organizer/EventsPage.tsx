@@ -31,6 +31,10 @@ function EventsPage() {
     setEditingEvent(null);
   };
 
+  const handleAddShowButton = (id: string) => {
+    console.log(id);
+  };
+
   if (isLoading) {
     return <LoadingScreen />;
   }
@@ -70,7 +74,7 @@ function EventsPage() {
             key={event.event_id}
             event={event}
             onEdit={openEditModal}
-            onAddEvent={() => console.log("Event Added")}
+            onAddShow={() => handleAddShowButton(event.event_id)}
             onArchive={() => console.log("Event Archived")}
           />
         ))}

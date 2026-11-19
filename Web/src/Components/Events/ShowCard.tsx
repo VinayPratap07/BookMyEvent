@@ -11,11 +11,11 @@ import type { Event } from "../../Types/Events_Type";
 interface ShowCardProps {
   event: Event;
   onEdit: (event: Event) => void;
-  onAddEvent: (event: Event) => void;
+  onAddShow: () => void;
   onArchive: (eventId: string) => void;
 }
 
-function EventCard({ event, onEdit, onAddEvent, onArchive }: ShowCardProps) {
+function EventCard({ event, onEdit, onAddShow, onArchive }: ShowCardProps) {
   return (
     <div className="rounded-3xl bg-[#161822] border border-purple-950/50 p-6 flex flex-col sm:flex-row gap-6 hover:border-purple-800/40 transition-colors">
       {/* Poster */}
@@ -85,7 +85,7 @@ function EventCard({ event, onEdit, onAddEvent, onArchive }: ShowCardProps) {
         <div className="mt-4 pt-4 border-t border-[#23263b]/70 flex items-center gap-3">
           <button
             type="button"
-            onClick={() => onAddEvent(event)}
+            onClick={onAddShow}
             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-purple-600/15 border border-purple-500/30 text-purple-300 text-xs font-semibold hover:bg-purple-600/25 transition-all"
           >
             <FiPlus size={14} />
@@ -94,7 +94,7 @@ function EventCard({ event, onEdit, onAddEvent, onArchive }: ShowCardProps) {
 
           <button
             type="button"
-            onClick={() => onArchive(event.id)}
+            onClick={() => onArchive(event.event_id)}
             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-semibold hover:bg-red-500/20 transition-all"
           >
             <FiArchive size={14} />
