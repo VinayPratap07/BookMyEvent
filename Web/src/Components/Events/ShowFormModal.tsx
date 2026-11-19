@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiX, FiFilm, FiCheck } from "react-icons/fi";
 import type { Event, EventType } from "../../Types/Events_Type";
 
@@ -23,6 +23,17 @@ const defaultFormData: EventFormData = {
   language: "English",
 };
 
+//Helper function
+const formatDuration = (duration: string | number): number => {
+  return Number(String(duration).replace(/\D/g, ""));
+};
+
+const formatDate = (date: string): string => {
+  const [day, month, year] = date.split(":");
+
+  return `${year}-${month}-${day}`;
+};
+
 function EventFormModal({
   editingEvent,
   onClose,
@@ -32,6 +43,25 @@ function EventFormModal({
   const [formData, setFormData] = useState<EventFormData>(() => {
     return defaultFormData;
   });
+
+  //To load the current event if available
+  useEffect(() => {
+    if (editingEvent) {
+      setFormData({
+        event_name: editingEvent.event_name,
+        event_description: editingEvent.event_description,
+        event_type: editingEvent.event_type,
+        event_image: editingEvent.event_image,
+        event_duration: formatDuration(editingEvent.event_duration),
+        released_at: formatDate(editingEvent.released_at),
+        min_age: editingEvent.min_age,
+        genere: editingEvent.genere,
+        language: editingEvent.language,
+      });
+    } else {
+      setFormData(defaultFormData);
+    }
+  }, [editingEvent]);
 
   const updateField = <K extends keyof EventFormData>(
     field: K,
