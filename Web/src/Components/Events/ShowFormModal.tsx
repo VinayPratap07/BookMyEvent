@@ -1,268 +1,222 @@
-import React, { useEffect, useState } from "react";
-import { FiX, FiFilm, FiCheck } from "react-icons/fi";
-import type { Event, EventType } from "../../Types/Events_Type";
+import { useEffect, useState } from "react";
+import { FiX, FiCalendar, FiClock, FiMonitor } from "react-icons/fi";
+import type { Screen } from "../../Types/screen_Type";
 
-type EventFormData = Omit<Event, "event_id">;
-
-interface EventFormModalProps {
-  editingEvent: Event | null;
-  onClose: () => void;
-  onSave: (data: EventFormData) => void;
-  isAdding: boolean;
+export interface ShowFormPayload {
+  screen_id: number;
+  show_date: string; // YYYY-MM-DD
+  start_time: string; // HH:mm
 }
 
-const defaultFormData: EventFormData = {
-  event_name: "",
-  event_description: "",
-  event_type: "Movie",
-  event_image: "",
-  event_duration: 120,
-  released_at: "",
-  min_age: 13,
-  genere: "",
-  language: "English",
-};
+const MOCK_SCREENS: Screen[] = [
+  {
+    screen_id: 1,
+    screen_name: "Audi 1 (IMAX Laser)",
+    screen_type: "IMAX 2D/3D",
+    total_seats: 240,
+    status: "Operational",
+  },
+  {
+    screen_id: 2,
+    screen_name: "Audi 2 (Dolby Cinema)",
+    screen_type: "Dolby Atmos 2D",
+    total_seats: 180,
+    status: "Operational",
+  },
+  {
+    screen_id: 3,
+    screen_name: "Audi 3 (4DX Motion)",
+    screen_type: "4DX",
+    total_seats: 120,
+    status: "Operational",
+  },
+  {
+    screen_id: 4,
+    screen_name: "Audi 4 (Grand Luxe)",
+    screen_type: "Standard Digital",
+    total_seats: 96,
+    status: "Maintenance",
+  },
+];
 
-//Helper function
-const formatDuration = (duration: string | number): number => {
-  return Number(String(duration).replace(/\D/g, ""));
-};
+interface ShowFormModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (payload: ShowFormPayload) => void;
+  screens?: Screen[];
+  isSubmitting?: boolean;
+  initialData?: Partial<ShowFormPayload>;
+}
 
-const formatDate = (date: string): string => {
-  const [day, month, year] = date.split(":");
-
-  return `${year}-${month}-${day}`;
-};
-
-function EventFormModal({
-  editingEvent,
+function ShowFormModal({
+  isOpen,
   onClose,
-  onSave,
-  isAdding,
-}: EventFormModalProps) {
-  const [formData, setFormData] = useState<EventFormData>(() => {
-    return defaultFormData;
-  });
+  onSubmit,
+  screens = MOCK_SCREENS,
+  isSubmitting = false,
+  initialData,
+}: ShowFormModalProps) {
+  const [showDate, setShowDate] = useState<string>("");
+  const [screenId, setScreenId] = useState<string>("");
+  const [startTime, setStartTime] = useState<string>("");
 
-  //To load the current event if available
   useEffect(() => {
-    if (editingEvent) {
-      setFormData({
-        event_name: editingEvent.event_name,
-        event_description: editingEvent.event_description,
-        event_type: editingEvent.event_type,
-        event_image: editingEvent.event_image,
-        event_duration: formatDuration(editingEvent.event_duration),
-        released_at: formatDate(editingEvent.released_at),
-        min_age: editingEvent.min_age,
-        genere: editingEvent.genere,
-        language: editingEvent.language,
-      });
+    if (!isOpen) return;
+
+    setShowDate(initialData?.show_date ?? "");
+    setStartTime(initialData?.start_time ?? "");
+
+    if (initialData?.screen_id) {
+      setScreenId(String(initialData.screen_id));
     } else {
-      setFormData(defaultFormData);
+      const firstOperational = screens.find((s) => s.status === "Operational");
+      setScreenId(firstOperational ? String(firstOperational.screen_id) : "");
     }
-  }, [editingEvent]);
+  }, [isOpen, initialData, screens]);
 
-  const updateField = <K extends keyof EventFormData>(
-    field: K,
-    value: EventFormData[K],
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSave(formData);
+
+    const parsedScreenId = Number(screenId);
+    if (
+      !showDate ||
+      !startTime ||
+      !Number.isInteger(parsedScreenId) ||
+      parsedScreenId <= 0
+    ) {
+      return;
+    }
+
+    onSubmit({
+      screen_id: parsedScreenId,
+      show_date: showDate,
+      start_time: startTime,
+    });
   };
+
+  const todayStr = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-[#12141c] border border-purple-900/50 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl p-6 sm:p-8 shadow-2xl">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-3xl bg-[#161822] border border-purple-950/60 p-6 text-gray-200 shadow-2xl space-y-6"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-[#23263b]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-purple-950/80 border border-purple-700/40 flex items-center justify-center text-purple-400">
-              <FiFilm />
-            </div>
-
-            <h3 className="text-lg font-bold text-white">
-              {editingEvent ? "Edit Event" : "Register New Event"}
-            </h3>
+          <div>
+            <h2 className="text-lg font-extrabold text-white tracking-tight">
+              {initialData ? "Edit Show Schedule" : "Schedule New Show"}
+            </h2>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Assign an auditorium screen, date, and start time.
+            </p>
           </div>
 
-          <button type="button" onClick={onClose}>
-            <FiX className="w-5 h-5 text-gray-400 hover:text-white" />
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-[#0c0d12] transition-colors disabled:opacity-50"
+            aria-label="Close modal"
+          >
+            <FiX className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form */}
-        <form
-          onSubmit={handleSubmit}
-          className="mt-6 space-y-5 text-xs font-medium"
-        >
-          {/* Name & Type */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="sm:col-span-2">
-              <label className="block text-gray-400 mb-1.5">
-                Event Title *
-              </label>
-
-              <input
-                required
-                value={formData.event_name}
-                onChange={(e) => updateField("event_name", e.target.value)}
-                placeholder="e.g. Gladiator II"
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-4 py-2 text-white outline-none focus:border-purple-600 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-400 mb-1.5">Type *</label>
-
-              <select
-                value={formData.event_type}
-                onChange={(e) =>
-                  updateField("event_type", e.target.value as EventType)
-                }
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2.5 text-white outline-none focus:border-purple-600"
-              >
-                <option value="Movie">Movie</option>
-                <option value="Live Event">Live Event</option>
-                <option value="Standup Comedy">Standup Comedy</option>
-                <option value="Concert">Concert</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Description */}
+        <form onSubmit={handleSubmit} className="space-y-4 text-xs font-medium">
+          {/* 1. Set Date */}
           <div>
-            <label className="block text-gray-400 mb-1.5">Description *</label>
-
-            <textarea
-              rows={2}
-              required
-              value={formData.event_description}
-              onChange={(e) => updateField("event_description", e.target.value)}
-              className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl p-3 text-white outline-none focus:border-purple-600"
-              placeholder="Plot summary, artist lineup, or synopsis..."
-            />
-          </div>
-
-          {/* Image */}
-          <div>
-            <label className="block text-gray-400 mb-1.5">
-              Poster Image URL *
+            <label className="flex items-center gap-1.5 text-gray-400 mb-1.5">
+              <FiCalendar className="w-3.5 h-3.5 text-purple-400" />
+              <span>Show Date</span>
             </label>
 
             <input
-              type="url"
+              type="date"
               required
-              value={formData.event_image}
-              onChange={(e) => updateField("event_image", e.target.value)}
-              placeholder="https://domain.com/poster.jpg"
-              className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-4 py-2 text-white outline-none focus:border-purple-600"
+              min={todayStr}
+              value={showDate}
+              onChange={(e) => setShowDate(e.target.value)}
+              className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3.5 py-2.5 text-white outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition-all text-xs [color-scheme:dark]"
             />
           </div>
 
-          {/* Numerical Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-gray-400 mb-1.5">
-                Duration (mins) *
-              </label>
+          {/* 2. Select Screen */}
+          <div>
+            <label className="flex items-center gap-1.5 text-gray-400 mb-1.5">
+              <FiMonitor className="w-3.5 h-3.5 text-purple-400" />
+              <span>Select Screen</span>
+            </label>
 
-              <input
-                type="number"
-                min="1"
-                required
-                value={formData.event_duration}
-                onChange={(e) =>
-                  updateField("event_duration", Number(e.target.value))
-                }
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2 text-white outline-none focus:border-purple-600"
-              />
-            </div>
+            <select
+              required
+              value={screenId}
+              onChange={(e) => setScreenId(e.target.value)}
+              className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3.5 py-2.5 text-white outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition-all text-xs"
+            >
+              <option value="" disabled>
+                {screens.length === 0
+                  ? "No screens available"
+                  : "Choose an auditorium screen"}
+              </option>
 
-            <div>
-              <label className="block text-gray-400 mb-1.5">
-                Release Date *
-              </label>
-
-              <input
-                type="date"
-                required
-                value={formData.released_at}
-                onChange={(e) => updateField("released_at", e.target.value)}
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2 text-white outline-none focus:border-purple-600"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-400 mb-1.5">Age Rating *</label>
-
-              <input
-                type="number"
-                min="0"
-                max="21"
-                required
-                value={formData.min_age}
-                onChange={(e) => updateField("min_age", Number(e.target.value))}
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2 text-white outline-none focus:border-purple-600"
-              />
-            </div>
+              {screens.map((screen) => {
+                const isMaintenance = screen.status !== "Operational";
+                return (
+                  <option
+                    key={screen.screen_id}
+                    value={screen.screen_id}
+                    disabled={isMaintenance}
+                  >
+                    {screen.screen_name} ({screen.screen_type} •{" "}
+                    {screen.total_seats} seats)
+                    {isMaintenance ? " — Maintenance" : ""}
+                  </option>
+                );
+              })}
+            </select>
           </div>
 
-          {/* Genre & Language */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-gray-400 mb-1.5">Genre *</label>
+          {/* 3. Starting Time */}
+          <div>
+            <label className="flex items-center gap-1.5 text-gray-400 mb-1.5">
+              <FiClock className="w-3.5 h-3.5 text-purple-400" />
+              <span>Starting Time</span>
+            </label>
 
-              <input
-                required
-                value={formData.genere}
-                onChange={(e) => updateField("genere", e.target.value)}
-                placeholder="Action / Thriller"
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2 text-white outline-none focus:border-purple-600"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-400 mb-1.5">Language *</label>
-
-              <input
-                required
-                value={formData.language}
-                onChange={(e) => updateField("language", e.target.value)}
-                placeholder="English, Hindi, Telugu"
-                className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3 py-2 text-white outline-none focus:border-purple-600"
-              />
-            </div>
+            <input
+              type="time"
+              required
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
+              className="w-full bg-[#0c0d12] border border-[#23263b] rounded-xl px-3.5 py-2.5 text-white outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 transition-all text-xs [color-scheme:dark]"
+            />
           </div>
 
           {/* Actions */}
-          <div className="pt-4 border-t border-[#23263b] flex items-center justify-end gap-3">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#23263b]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-gray-400 hover:text-white"
+              disabled={isSubmitting}
+              className="px-4 py-2.5 rounded-xl border border-[#23263b] text-gray-300 hover:text-white hover:bg-[#0c0d12] text-xs font-semibold transition-all disabled:opacity-50"
             >
               Cancel
             </button>
 
             <button
               type="submit"
-              disabled={isAdding}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold"
+              disabled={isSubmitting || !screenId || !showDate || !startTime}
+              className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold transition-all shadow-lg shadow-purple-950/50"
             >
-              <FiCheck className="w-4 h-4" />
-              {isAdding
-                ? "Adding Event..."
-                : editingEvent
-                  ? "Save Changes"
-                  : "Create Event"}
+              {isSubmitting ? "Saving..." : "Save Show"}
             </button>
           </div>
         </form>
@@ -271,4 +225,4 @@ function EventFormModal({
   );
 }
 
-export default EventFormModal;
+export default ShowFormModal;

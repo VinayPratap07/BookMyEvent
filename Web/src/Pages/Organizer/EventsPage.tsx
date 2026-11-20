@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { FiPlus } from "react-icons/fi";
 import type { Event } from "../../Types/Events_Type";
-import EventCard from "../../Components/Events/ShowCard";
-import EventFormModal from "../../Components/Events/ShowFormModal";
+import EventCard from "../../Components/Events/EventCard";
+import EventFormModal from "../../Components/Events/EventFormModal";
 import { useEvents } from "../../Hooks/useEvents";
 import LoadingScreen from "../../Components/Loading";
 import ErrorState from "../../Components/Error";
+import ShowFormModal from "../../Components/Events/ShowFormModal";
 
 function EventsPage() {
+  //Event states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+
+  //Show states
+  const [isShowModalOpen, setIsShowModalOpen] = useState(false);
 
   const { isLoading, error, data, addEvent, isAdding } = useEvents();
 
@@ -32,7 +37,7 @@ function EventsPage() {
   };
 
   const handleAddShowButton = (id: string) => {
-    console.log(id);
+    setIsShowModalOpen(true);
   };
 
   if (isLoading) {
@@ -90,6 +95,14 @@ function EventsPage() {
             closeModal();
           }}
           isAdding={isAdding}
+        />
+      )}
+
+      {isShowModalOpen && (
+        <ShowFormModal
+          isOpen={isShowModalOpen}
+          onClose={() => setIsShowModalOpen(false)}
+          onSubmit={(payload) => console.log(payload)}
         />
       )}
     </div>
