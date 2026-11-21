@@ -1,4 +1,4 @@
-import type { SeatTier, TierConfig } from "./ScreenLayout_Type";
+import type { SeatTier, TierConfig } from "../Types/ScreenLayout_Type";
 
 export const DEFAULT_ROWS = 8;
 export const DEFAULT_COLS = 14;

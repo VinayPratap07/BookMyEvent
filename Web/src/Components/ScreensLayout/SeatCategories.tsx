@@ -1,7 +1,7 @@
 import { FiCheck } from "react-icons/fi";
 import { MdEventSeat } from "react-icons/md";
 import type { SeatTier } from "../../Types/ScreenLayout_Type";
-import { tierConfigs } from "../../Types/ScreenLayout_Constants";
+import { tierConfigs } from "../../Utils/ScreenLayout_Constants";
 
 interface SeatCategoriesProps {
   selectedTier: SeatTier;
