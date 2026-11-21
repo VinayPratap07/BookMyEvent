@@ -1,5 +1,5 @@
 import type { SeatTier } from "../../Types/ScreenLayout_Type";
-import { tierConfigs } from "../../Types/ScreenLayout_Constants";
+import { tierConfigs } from "../../Utils/ScreenLayout_Constants";
 
 function SeatLegend() {
   const tiers: SeatTier[] = ["standard", "premium", "vip", "aisle", "gap"];

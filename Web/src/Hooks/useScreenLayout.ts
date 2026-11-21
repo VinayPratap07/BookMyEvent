@@ -12,8 +12,7 @@ import type {
 } from "../Types/ScreenLayout_Type";
 
 import { generateDefaultSeats, mapApiSeatsToGrid } from "../Utils/ScreenLayout";
-
-import { DEFAULT_COLS, DEFAULT_ROWS } from "../Types/ScreenLayout_Constants";
+import { DEFAULT_COLS, DEFAULT_ROWS } from "../Utils/ScreenLayout_Constants";
 
 interface UseScreenLayoutProps {
   screenId: string;

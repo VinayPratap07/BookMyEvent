@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import SeatLegend from "./SeatLegend";
 import type { Seat } from "../../Types/ScreenLayout_Type";
-import { tierConfigs } from "../../Types/ScreenLayout_Constants";
+import { tierConfigs } from "../../Utils/ScreenLayout_Constants";
 
 interface SeatingGridProps {
   seats: Seat[];
