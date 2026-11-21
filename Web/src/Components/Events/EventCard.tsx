@@ -4,6 +4,7 @@ import {
   FiArchive,
   FiClock,
   FiCalendar,
+  FiMonitor,
 } from "react-icons/fi";
 import type { Event } from "../../Types/Events_Type";
 // import { Event } from "./show.types";
@@ -78,6 +79,48 @@ function EventCard({ event, onEdit, onAddShow, onArchive }: ShowCardProps) {
               <FiCalendar size={12} />
               {event.released_at}
             </span>
+          </div>
+
+          {/* Scheduled Shows */}
+          <div className="mt-4 pt-3 border-t border-[#23263b]/60">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+                Scheduled Shows ({event.shows?.length ?? 0})
+              </span>
+            </div>
+
+            {event.shows && event.shows.length > 0 ? (
+              <div className="flex flex-wrap gap-2 max-h-28 overflow-y-auto pr-1">
+                {event.shows.map((show) => (
+                  <div
+                    key={show.show_id}
+                    className="px-3 py-1.5 rounded-xl bg-[#0c0d12] border border-[#23263b] flex items-center gap-2 text-xs"
+                  >
+                    <span className="flex items-center gap-1 font-semibold text-purple-300">
+                      <FiMonitor size={11} />
+                      {show.screen?.screen_name ?? "Unassigned"}
+                    </span>
+
+                    <span className="text-gray-600">•</span>
+
+                    <span className="text-gray-300 font-mono text-[11px]">
+                      {show.show_date}
+                    </span>
+
+                    <span className="text-gray-600">•</span>
+
+                    <span className="text-gray-400 font-mono text-[11px]">
+                      {show.start_time.slice(0, 5)} -{" "}
+                      {show.end_time.slice(0, 5)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-gray-500 italic">
+                No shows scheduled yet.
+              </p>
+            )}
           </div>
         </div>
 

@@ -199,7 +199,31 @@ async function addEvent(req, res) {
 
 async function getEvents(req, res) {
   try {
-    const [events] = await pool.query(`SELECT * FROM events`);
+    const [events] = await pool.query(`
+      SELECT
+    e.*,
+    CASE
+        WHEN COUNT(s.show_id) = 0 THEN JSON_ARRAY()
+        ELSE JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'show_id', s.show_id,
+                'show_date', s.show_date,
+                'start_time', s.start_time,
+                'end_time', s.end_time,
+                'screen', JSON_OBJECT(
+                    'screen_id', sc.screen_id,
+                    'screen_name', sc.screen_name
+                )
+            )
+        )
+    END AS shows
+FROM events AS e
+LEFT JOIN shows AS s
+    ON e.event_id = s.event_id_ref
+LEFT JOIN screens AS sc
+    ON s.screen_id_ref = sc.screen_id
+GROUP BY e.event_id;
+      `);
     return res.status(200).json(events);
   } catch (error) {
     return res.status(500).json({ msg: error.message });
@@ -226,6 +250,8 @@ async function createShow(req, res) {
     return res.status(500).json({ message: "Failed to add show" });
   }
 }
+
+async function getShows(req, res) {}
 
 async function setSeatPricingForShow(req, res) {
   const { show_id, seat_prices } = req.body;

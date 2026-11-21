@@ -8,12 +8,21 @@ export interface Event {
   event_image: string;
   event_duration: number;
   released_at: string;
+  shows: shows[];
   min_age: number;
   genere: string;
   language: string;
 }
 
 export interface ScreenOption {
-  id: string;
-  name: string;
+  screen_id: string;
+  screen_name: string;
+}
+
+export interface shows {
+  end_time: string;
+  screen: ScreenOption;
+  show_date: string;
+  show_id: string;
+  start_time: string;
 }

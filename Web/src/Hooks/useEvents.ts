@@ -17,6 +17,7 @@ export function useEvents() {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });
+  console.log(data);
 
   const AddMutation = useMutation({
     mutationFn: addEvents,
